@@ -1,0 +1,376 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_Quaternion" Id="{368e3e81-21d8-4842-8003-27045a72af0c}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_Quaternion IMPLEMENTS I_Quaternion
+VAR
+    fw : LREAL;
+    fx : LREAL;
+    fy : LREAL;
+    fz : LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+]]></ST>
+    </Implementation>
+    <Method Name="AddQuat" Id="{f9d2f632-88d1-43c0-b869-4c86af2cc83c}">
+      <Declaration><![CDATA[
+METHOD AddQuat
+VAR_INPUT
+    iQuaternion	: I_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+w := w + iQuaternion.w;
+x := x + iQuaternion.x;
+y := y + iQuaternion.y;
+z := z + iQuaternion.z;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="DivQuat" Id="{1915c45d-0c4c-4cb5-9348-b641b28e4fe4}">
+      <Declaration><![CDATA[
+METHOD DivQuat
+VAR_INPUT
+    iQuaternion	: I_Quaternion;
+END_VAR
+VAR_OUTPUT
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+VAR
+    fNormSq : LREAL;
+    fwi : LREAL;
+    fxi : LREAL;
+    fyi : LREAL;
+    fzi : LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+bError := FALSE;
+sErrorMsg := '';
+
+fNormSq := iQuaternion.GetNormSq();
+
+IF fNormSq = 0.0 THEN
+    bError := TRUE;
+    sErrorMsg := 'Error: cannot divide by a quaternion with a norm of 0.';
+    RETURN;
+END_IF
+
+fwi := w;
+fxi := x;
+fyi := y;
+fzi := z;
+
+w := ((iQuaternion.w * fwi) + (iQuaternion.x * fxi) + (iQuaternion.y * fyi) + (iQuaternion.z * fzi)) / fNormSq;
+x := ((iQuaternion.w * fxi) - (iQuaternion.x * fwi) - (iQuaternion.y * fzi) + (iQuaternion.z * fyi)) / fNormSq;
+y := ((iQuaternion.w * fyi) + (iQuaternion.x * fzi) - (iQuaternion.y * fwi) - (iQuaternion.z * fxi)) / fNormSq;
+z := ((iQuaternion.w * fzi) - (iQuaternion.x * fyi) + (iQuaternion.y * fxi) - (iQuaternion.z * fwi)) / fNormSq;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="DivScalar" Id="{4d84e2f2-81a3-414a-b1e8-9a34fadfe7d1}">
+      <Declaration><![CDATA[
+METHOD DivScalar
+VAR_INPUT
+    fScalar : LREAL;
+END_VAR
+VAR_OUTPUT
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+bError := FALSE;
+sErrorMsg := '';
+
+IF fScalar = 0.0 THEN
+    bError := TRUE;
+    sErrorMsg := 'Error: attempted division of quaternion by scalar of 0.';
+    RETURN;
+END_IF
+
+fw := w / fScalar;
+fx := x / fScalar;
+fy := y / fScalar;
+fz := z / fScalar;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="EqualsQuat" Id="{b2ebfb21-208a-4535-9c1d-8fb4ad4e160f}">
+      <Declaration><![CDATA[
+METHOD EqualsQuat : BOOL
+VAR_INPUT
+    iQuaternion	: I_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+EqualsQuat := w = iQuaternion.w AND
+              x = iQuaternion.x AND
+              y = iQuaternion.y AND
+              z = iQuaternion.z;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetNorm" Id="{172c3d10-6a52-4e90-853d-ef52c393f88d}">
+      <Declaration><![CDATA[
+METHOD GetNorm : LREAL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+GetNorm := SQRT(w*w + x*x + y*y + z*z);
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetNormSq" Id="{f4b27ab1-ff46-4a03-8e7e-5b8182f21d26}">
+      <Declaration><![CDATA[
+METHOD GetNormSq : LREAL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+GetNormSq := w*w + x*x + y*y + z*z;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MakeConj" Id="{0d0a6a03-d7f4-464e-b9c6-f4816551c4f1}">
+      <Declaration><![CDATA[
+METHOD MakeConj
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+fw := w;
+fx := -x;
+fy := -y;
+fz := -z;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MulQuat" Id="{6c286bdd-7e84-46da-8460-b9d9c214f657}">
+      <Declaration><![CDATA[
+METHOD MulQuat
+VAR_INPUT
+    iQuaternion	: I_Quaternion;
+END_VAR
+VAR
+    fwi : LREAL;
+    fxi : LREAL;
+    fyi : LREAL;
+    fzi : LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+fwi := w;
+fxi := x;
+fyi := y;
+fzi := z;
+
+fw := (fwi * iQuaternion.w) - (fxi * iQuaternion.x) - (fyi * iQuaternion.y) - (fzi * iQuaternion.z);
+fx := (fwi * iQuaternion.x) + (fxi * iQuaternion.w) + (fyi * iQuaternion.z) - (fzi * iQuaternion.y);
+fy := (fwi * iQuaternion.y) - (fxi * iQuaternion.z) + (fyi * iQuaternion.w) + (fzi * iQuaternion.x);
+fz := (fwi * iQuaternion.z) + (fxi * iQuaternion.y) - (fyi * iQuaternion.x) + (fzi * iQuaternion.w);
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Normalize" Id="{eb8f3894-180f-4c3d-b1a9-a26e4a1164ab}">
+      <Declaration><![CDATA[
+METHOD Normalize
+VAR_OUTPUT
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+VAR
+    fNorm : LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+bError := FALSE;
+sErrorMsg := '';
+
+fNorm := GetNorm();
+
+IF fNorm = 0.0 THEN
+    bError := TRUE;
+    sErrorMsg := 'Error: cannot normalize a quaternion with a norm of 0.';
+    RETURN;
+END_IF
+
+w := w / fNorm;
+x := x / fNorm;
+y := y / fNorm;
+z := z / fNorm;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Set" Id="{0fe647d3-f4aa-4086-b995-65bfafb09ef8}">
+      <Declaration><![CDATA[
+METHOD Set
+VAR_INPUT
+    w : LREAL;
+    i : LREAL;
+    j : LREAL;
+    k : LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+fw := w;
+fx := i;
+fy := j;
+fz := k;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ToString" Id="{54f42700-7127-410c-be09-fde5d937a7ae}">
+      <Declaration><![CDATA[
+METHOD ToString : T_MaxString
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+ToString := '';
+
+IF w < 0.0 THEN
+    ToString := CONCAT(ToString, '-');
+END_IF
+
+ToString := CONCAT(ToString, LREAL_TO_STRING(ABS(w)));
+
+IF x >= 0.0 THEN
+    ToString := CONCAT(ToString, ' + ');
+ELSE
+    ToString := CONCAT(ToString, ' - ');
+END_IF
+
+ToString := CONCAT(ToString, LREAL_TO_STRING(ABS(x)));
+ToString := CONCAT(ToString, 'i');
+
+IF y >= 0.0 THEN
+    ToString := CONCAT(ToString, ' + ');
+ELSE
+    ToString := CONCAT(ToString, ' - ');
+END_IF
+
+ToString := CONCAT(ToString, LREAL_TO_STRING(ABS(y)));
+ToString := CONCAT(ToString, 'j');
+
+IF z >= 0.0 THEN
+    ToString := CONCAT(ToString, ' + ');
+ELSE
+    ToString := CONCAT(ToString, ' - ');
+END_IF
+
+ToString := CONCAT(ToString, LREAL_TO_STRING(ABS(z)));
+ToString := CONCAT(ToString, 'k');
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="w" Id="{17f98bc7-9353-4a99-8e24-cb6cc3bff018}">
+      <Declaration><![CDATA[
+PROPERTY w : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{f87b7f71-d6b3-4a5e-82b9-7aed2063a787}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+w := fw;
+]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{514f658b-9130-4171-89fa-63e9f5da998b}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+fw := w;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="x" Id="{9f7d7ec1-ea69-4a4d-ad05-ebda0a502293}">
+      <Declaration><![CDATA[
+PROPERTY x : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{34c5f1f9-74e6-49d2-84bf-38d7a7580d8b}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+x := fx;
+]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c7bb6447-2983-4e5a-b29b-7714cd2126d7}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+fx := x;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="y" Id="{4c760f40-696a-4501-848e-c0bb02a44ff6}">
+      <Declaration><![CDATA[
+PROPERTY y : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{fb4ee227-0c91-40b0-995d-11d7d79c23c2}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+y := fy;
+]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{594c8029-8ed6-4e20-8454-fdc93c7b80c8}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+fy := y;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="z" Id="{93a01f3f-5090-43d2-b56a-8cd7586ad31c}">
+      <Declaration><![CDATA[
+PROPERTY z : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{b3c22bdd-55c2-483c-810f-ea1fc45d6b7d}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+z := fz;
+]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{e1a56b12-5ba1-4ab1-84ca-a2b2af0ceeab}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+fz := z;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+  </POU>
+</TcPlcObject>

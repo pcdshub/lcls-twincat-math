@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="PRG_Test" Id="{40161a85-0f75-4224-b484-c4e1138dd905}" SpecialFunc="None">
+    <Declaration><![CDATA[
+PROGRAM PRG_Test
+VAR
+    fbQuaternionTest : FB_Quaternion_Test;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TcUnit.RUN();
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

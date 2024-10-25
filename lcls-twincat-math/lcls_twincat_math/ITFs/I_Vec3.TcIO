@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <Itf Name="I_Vec3" Id="{753d82a5-d0c6-4dec-9fc2-1c93361601d8}">
+    <Declaration><![CDATA[
+INTERFACE I_Vec3
+]]></Declaration>
+    <Property Name="x" Id="{c7a2e018-c666-4e1c-8b2a-9058f358f7d9}">
+      <Declaration><![CDATA[
+PROPERTY x : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{4b967571-0c47-4fb6-b35a-78c249e77788}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="y" Id="{58946c8a-b3a3-461f-88b7-554df5ec24a0}">
+      <Declaration><![CDATA[
+PROPERTY y : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{2b2a97e1-cf1c-4f29-ba22-42e18f13d9a4}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="z" Id="{59aaa452-ddf2-4b74-9579-651172465b95}">
+      <Declaration><![CDATA[
+PROPERTY z : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{6b9c7a96-8fcf-4aad-ba76-f3de6758dba2}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

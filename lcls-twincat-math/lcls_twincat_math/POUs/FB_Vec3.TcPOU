@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_Vec3" Id="{c09dfe87-9fa9-4800-966a-c9fa2f01d9b6}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_Vec3 IMPLEMENTS I_Vec3
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+]]></ST>
+    </Implementation>
+    <Method Name="AddVec3" Id="{ef14f849-964d-41c6-b93c-957ccd6460f6}">
+      <Declaration><![CDATA[
+{warning 'Add method implementation '}
+METHOD AddVec3 : I_Vec3
+VAR_INPUT
+    iVec3	: I_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CrossVec3" Id="{61d300cc-4420-46cd-b758-e15093cacda1}">
+      <Declaration><![CDATA[
+{warning 'Add method implementation '}
+METHOD CrossVec3 : I_Vec3
+VAR_INPUT
+    iVec3	: I_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="DotVec3" Id="{96055ecf-9626-4c41-8898-10ce4518584b}">
+      <Declaration><![CDATA[
+{warning 'Add method implementation '}
+METHOD DotVec3 : LREAL
+VAR_INPUT
+    iVec3	: I_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetMag" Id="{9a7fc225-e930-434a-aa42-0d79876ee438}">
+      <Declaration><![CDATA[
+{warning 'Add method implementation '}
+METHOD GetMag : LREAL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetNorm" Id="{29814131-65a5-4ed7-b948-b70d7762daf7}">
+      <Declaration><![CDATA[
+{warning 'Add method implementation '}
+METHOD GetNorm : I_Vec3
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ToString" Id="{c35ca60f-311e-4b45-99f0-9b9fae4ea9dd}">
+      <Declaration><![CDATA[
+{warning 'Add method implementation '}
+METHOD ToString : STRING
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="x" Id="{d1132b1f-8d78-4d71-868f-4b5ca1d3abf5}">
+      <Declaration><![CDATA[
+{warning 'Add property implementation'}
+PROPERTY x : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{f7878e76-22eb-42c2-97b3-b87e70fce12d}">
+        <Declaration><![CDATA[
+VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="y" Id="{9bbfc62e-5928-4dd9-9c9f-a12c08bc7ea3}">
+      <Declaration><![CDATA[
+{warning 'Add property implementation'}
+PROPERTY y : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{8be5870a-3987-4750-b25a-35c6debc60c5}">
+        <Declaration><![CDATA[
+VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="z" Id="{668d9da2-5ed3-4ecb-9b12-26772daecde7}">
+      <Declaration><![CDATA[
+{warning 'Add property implementation'}
+PROPERTY z : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{51c53bf0-f603-4526-af72-51056970282d}">
+        <Declaration><![CDATA[
+VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+  </POU>
+</TcPlcObject>
