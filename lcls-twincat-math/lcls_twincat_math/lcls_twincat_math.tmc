@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<TcModuleClass xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance2" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2009/05/TcModuleClass" Hash="{0194AC3B-5BB6-55E8-DF21-E550D15D1C9C}" GeneratedBy="TwinCAT XAE Plc">
+<TcModuleClass xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance2" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2009/05/TcModuleClass" Hash="{AD0E25FF-497E-ADAB-2162-7A5FF7476DC2}" GeneratedBy="TwinCAT XAE Plc">
   <DataTypes>
     <DataType>
       <Name GUID="{6F5942ED-BFA1-497D-8225-23C6DAAD0A09}" TcBaseType="true">ST_LibVersion</Name>
@@ -1773,7 +1773,7 @@
         <BitOffs>621828096</BitOffs>
       </SubItem>
       <SubItem>
-        <Name>FB_TcUnitRunner_226__RunTestSuiteTestsInSequence_239__CurrentlyRunningTestSuite</Name>
+        <Name>FB_TcUnitRunner_227__RunTestSuiteTestsInSequence_240__CurrentlyRunningTestSuite</Name>
         <Type>UINT</Type>
         <Comment> This variable holds which current test suite is being called, as we are running
        each one in a sequence (one by one) </Comment>
@@ -1789,7 +1789,7 @@
         </Properties>
       </SubItem>
       <SubItem>
-        <Name>FB_TcUnitRunner_226__RunTestSuiteTestsInSequence_239__TimerBetweenExecutionOfTestSuites</Name>
+        <Name>FB_TcUnitRunner_227__RunTestSuiteTestsInSequence_240__TimerBetweenExecutionOfTestSuites</Name>
         <Type Namespace="Tc2_Standard">TOF</Type>
         <BitSize>256</BitSize>
         <BitOffs>621828224</BitOffs>
@@ -1836,7 +1836,7 @@
           <Properties>
             <Property>
               <Name>uselocation</Name>
-              <Value>FB_TCUNITRUNNER_226__RUNTESTSUITETESTSINSEQUENCE_239__CURRENTLYRUNNINGTESTSUITE</Value>
+              <Value>FB_TCUNITRUNNER_227__RUNTESTSUITETESTSINSEQUENCE_240__CURRENTLYRUNNINGTESTSUITE</Value>
             </Property>
           </Properties>
         </Local>
@@ -1847,7 +1847,7 @@
           <Properties>
             <Property>
               <Name>uselocation</Name>
-              <Value>FB_TCUNITRUNNER_226__RUNTESTSUITETESTSINSEQUENCE_239__TIMERBETWEENEXECUTIONOFTESTSUITES</Value>
+              <Value>FB_TCUNITRUNNER_227__RUNTESTSUITETESTSINSEQUENCE_240__TIMERBETWEENEXECUTIONOFTESTSUITES</Value>
             </Property>
           </Properties>
         </Local>
@@ -9222,19 +9222,9 @@
       </SubItem>
     </DataType>
     <DataType>
-      <Name>I_Quaternion</Name>
+      <Name>I_Vec3</Name>
       <BitSize>64</BitSize>
       <ExtendsType GUID="{18071995-0000-0000-0000-000000000018}">PVOID</ExtendsType>
-      <Method>
-        <Name>__getw</Name>
-        <ReturnType>LREAL</ReturnType>
-        <ReturnBitSize>64</ReturnBitSize>
-        <Properties>
-          <Property>
-            <Name>property</Name>
-          </Property>
-        </Properties>
-      </Method>
       <Method>
         <Name>__getx</Name>
         <ReturnType>LREAL</ReturnType>
@@ -9265,26 +9255,26 @@
           </Property>
         </Properties>
       </Method>
+    </DataType>
+    <DataType>
+      <Name>I_Vec4</Name>
+      <BitSize>64</BitSize>
+      <ExtendsType>I_Vec3</ExtendsType>
       <Method>
-        <Name>GetNorm</Name>
+        <Name>__getw</Name>
         <ReturnType>LREAL</ReturnType>
         <ReturnBitSize>64</ReturnBitSize>
-      </Method>
-      <Method>
-        <Name>GetNormSq</Name>
-        <ReturnType>LREAL</ReturnType>
-        <ReturnBitSize>64</ReturnBitSize>
-      </Method>
-      <Method>
-        <Name>ToString</Name>
-        <ReturnType Namespace="Tc2_System">T_MaxString</ReturnType>
-        <ReturnBitSize>2048</ReturnBitSize>
+        <Properties>
+          <Property>
+            <Name>property</Name>
+          </Property>
+        </Properties>
       </Method>
     </DataType>
     <DataType>
       <Name>FB_Quaternion</Name>
       <BitSize>384</BitSize>
-      <Implements>I_Quaternion</Implements>
+      <Implements>I_Vec4</Implements>
       <SubItem>
         <Name>fw</Name>
         <Type>LREAL</Type>
@@ -9310,23 +9300,40 @@
         <BitOffs>320</BitOffs>
       </SubItem>
       <Method>
-        <Name>__setw</Name>
+        <Name>DivScalar</Name>
         <Parameter>
-          <Name>w</Name>
+          <Name>fScalar</Name>
           <Type>LREAL</Type>
           <BitSize>64</BitSize>
         </Parameter>
-        <Properties>
-          <Property>
-            <Name>property</Name>
-          </Property>
-        </Properties>
+        <Parameter>
+          <Name>bError</Name>
+          <Type>BOOL</Type>
+          <BitSize>8</BitSize>
+          <Properties>
+            <Property>
+              <Name>ItemType</Name>
+              <Value>Output</Value>
+            </Property>
+          </Properties>
+        </Parameter>
+        <Parameter>
+          <Name>sErrorMsg</Name>
+          <Type Namespace="Tc2_System">T_MaxString</Type>
+          <BitSize>2048</BitSize>
+          <Properties>
+            <Property>
+              <Name>ItemType</Name>
+              <Value>Output</Value>
+            </Property>
+          </Properties>
+        </Parameter>
       </Method>
       <Method>
         <Name>AddQuat</Name>
         <Parameter>
           <Name>iQuaternion</Name>
-          <Type>I_Quaternion</Type>
+          <Type>I_Vec4</Type>
           <BitSize>64</BitSize>
         </Parameter>
       </Method>
@@ -9336,38 +9343,10 @@
         <ReturnBitSize>64</ReturnBitSize>
       </Method>
       <Method>
-        <Name>MulQuat</Name>
-        <Parameter>
-          <Name>iQuaternion</Name>
-          <Type>I_Quaternion</Type>
-          <BitSize>64</BitSize>
-        </Parameter>
-        <Local>
-          <Name>fwi</Name>
-          <Type>LREAL</Type>
-          <BitSize>64</BitSize>
-        </Local>
-        <Local>
-          <Name>fxi</Name>
-          <Type>LREAL</Type>
-          <BitSize>64</BitSize>
-        </Local>
-        <Local>
-          <Name>fyi</Name>
-          <Type>LREAL</Type>
-          <BitSize>64</BitSize>
-        </Local>
-        <Local>
-          <Name>fzi</Name>
-          <Type>LREAL</Type>
-          <BitSize>64</BitSize>
-        </Local>
-      </Method>
-      <Method>
         <Name>DivQuat</Name>
         <Parameter>
           <Name>iQuaternion</Name>
-          <Type>I_Quaternion</Type>
+          <Type>I_Vec4</Type>
           <BitSize>64</BitSize>
         </Parameter>
         <Parameter>
@@ -9419,14 +9398,12 @@
         </Local>
       </Method>
       <Method>
-        <Name>__getx</Name>
-        <ReturnType>LREAL</ReturnType>
-        <ReturnBitSize>64</ReturnBitSize>
-        <Local>
-          <Name>x</Name>
+        <Name>__setw</Name>
+        <Parameter>
+          <Name>w</Name>
           <Type>LREAL</Type>
           <BitSize>64</BitSize>
-        </Local>
+        </Parameter>
         <Properties>
           <Property>
             <Name>property</Name>
@@ -9464,34 +9441,32 @@
         </Properties>
       </Method>
       <Method>
-        <Name>DivScalar</Name>
+        <Name>MulQuat</Name>
         <Parameter>
-          <Name>fScalar</Name>
-          <Type>LREAL</Type>
+          <Name>iQuaternion</Name>
+          <Type>I_Vec4</Type>
           <BitSize>64</BitSize>
         </Parameter>
-        <Parameter>
-          <Name>bError</Name>
-          <Type>BOOL</Type>
-          <BitSize>8</BitSize>
-          <Properties>
-            <Property>
-              <Name>ItemType</Name>
-              <Value>Output</Value>
-            </Property>
-          </Properties>
-        </Parameter>
-        <Parameter>
-          <Name>sErrorMsg</Name>
-          <Type Namespace="Tc2_System">T_MaxString</Type>
-          <BitSize>2048</BitSize>
-          <Properties>
-            <Property>
-              <Name>ItemType</Name>
-              <Value>Output</Value>
-            </Property>
-          </Properties>
-        </Parameter>
+        <Local>
+          <Name>fwi</Name>
+          <Type>LREAL</Type>
+          <BitSize>64</BitSize>
+        </Local>
+        <Local>
+          <Name>fxi</Name>
+          <Type>LREAL</Type>
+          <BitSize>64</BitSize>
+        </Local>
+        <Local>
+          <Name>fyi</Name>
+          <Type>LREAL</Type>
+          <BitSize>64</BitSize>
+        </Local>
+        <Local>
+          <Name>fzi</Name>
+          <Type>LREAL</Type>
+          <BitSize>64</BitSize>
+        </Local>
       </Method>
       <Method>
         <Name>EqualsQuat</Name>
@@ -9499,7 +9474,7 @@
         <ReturnBitSize>8</ReturnBitSize>
         <Parameter>
           <Name>iQuaternion</Name>
-          <Type>I_Quaternion</Type>
+          <Type>I_Vec4</Type>
           <BitSize>64</BitSize>
         </Parameter>
       </Method>
@@ -9525,6 +9500,21 @@
         <Name>ToString</Name>
         <ReturnType Namespace="Tc2_System">T_MaxString</ReturnType>
         <ReturnBitSize>2048</ReturnBitSize>
+      </Method>
+      <Method>
+        <Name>__getx</Name>
+        <ReturnType>LREAL</ReturnType>
+        <ReturnBitSize>64</ReturnBitSize>
+        <Local>
+          <Name>x</Name>
+          <Type>LREAL</Type>
+          <BitSize>64</BitSize>
+        </Local>
+        <Properties>
+          <Property>
+            <Name>property</Name>
+          </Property>
+        </Properties>
       </Method>
       <Method>
         <Name>GetNorm</Name>
@@ -9562,6 +9552,19 @@
         </Local>
       </Method>
       <Method>
+        <Name>__setz</Name>
+        <Parameter>
+          <Name>z</Name>
+          <Type>LREAL</Type>
+          <BitSize>64</BitSize>
+        </Parameter>
+        <Properties>
+          <Property>
+            <Name>property</Name>
+          </Property>
+        </Properties>
+      </Method>
+      <Method>
         <Name>__setx</Name>
         <Parameter>
           <Name>x</Name>
@@ -9578,19 +9581,6 @@
         <Name>__sety</Name>
         <Parameter>
           <Name>y</Name>
-          <Type>LREAL</Type>
-          <BitSize>64</BitSize>
-        </Parameter>
-        <Properties>
-          <Property>
-            <Name>property</Name>
-          </Property>
-        </Properties>
-      </Method>
-      <Method>
-        <Name>__setz</Name>
-        <Parameter>
-          <Name>z</Name>
           <Type>LREAL</Type>
           <BitSize>64</BitSize>
         </Parameter>
@@ -9631,76 +9621,27 @@
       </Properties>
     </DataType>
     <DataType>
-      <Name>I_Vec3</Name>
-      <BitSize>64</BitSize>
-      <ExtendsType GUID="{18071995-0000-0000-0000-000000000018}">PVOID</ExtendsType>
-      <Method>
-        <Name>__getx</Name>
-        <ReturnType>LREAL</ReturnType>
-        <ReturnBitSize>64</ReturnBitSize>
-        <Properties>
-          <Property>
-            <Name>property</Name>
-          </Property>
-        </Properties>
-      </Method>
-      <Method>
-        <Name>__gety</Name>
-        <ReturnType>LREAL</ReturnType>
-        <ReturnBitSize>64</ReturnBitSize>
-        <Properties>
-          <Property>
-            <Name>property</Name>
-          </Property>
-        </Properties>
-      </Method>
-      <Method>
-        <Name>__getz</Name>
-        <ReturnType>LREAL</ReturnType>
-        <ReturnBitSize>64</ReturnBitSize>
-        <Properties>
-          <Property>
-            <Name>property</Name>
-          </Property>
-        </Properties>
-      </Method>
-      <Method>
-        <Name>GetNorm</Name>
-        <ReturnType>LREAL</ReturnType>
-        <ReturnBitSize>64</ReturnBitSize>
-      </Method>
-      <Method>
-        <Name>GetNormSq</Name>
-        <ReturnType>LREAL</ReturnType>
-        <ReturnBitSize>64</ReturnBitSize>
-      </Method>
-      <Method>
-        <Name>ToString</Name>
-        <ReturnType Namespace="Tc2_System">T_MaxString</ReturnType>
-        <ReturnBitSize>2048</ReturnBitSize>
-      </Method>
-    </DataType>
-    <DataType>
       <Name>FB_Vec3</Name>
-      <BitSize>320</BitSize>
+      <BitSize>384</BitSize>
       <Implements>I_Vec3</Implements>
+      <Implements>I_Vec4</Implements>
       <SubItem>
         <Name>fx</Name>
-        <Type>LREAL</Type>
-        <BitSize>64</BitSize>
-        <BitOffs>128</BitOffs>
-      </SubItem>
-      <SubItem>
-        <Name>fy</Name>
         <Type>LREAL</Type>
         <BitSize>64</BitSize>
         <BitOffs>192</BitOffs>
       </SubItem>
       <SubItem>
-        <Name>fz</Name>
+        <Name>fy</Name>
         <Type>LREAL</Type>
         <BitSize>64</BitSize>
         <BitOffs>256</BitOffs>
+      </SubItem>
+      <SubItem>
+        <Name>fz</Name>
+        <Type>LREAL</Type>
+        <BitSize>64</BitSize>
+        <BitOffs>320</BitOffs>
       </SubItem>
       <Method>
         <Name>DivScalar</Name>
@@ -9738,12 +9679,14 @@
         <ReturnBitSize>64</ReturnBitSize>
       </Method>
       <Method>
-        <Name>__setx</Name>
-        <Parameter>
-          <Name>x</Name>
+        <Name>__getw</Name>
+        <ReturnType>LREAL</ReturnType>
+        <ReturnBitSize>64</ReturnBitSize>
+        <Local>
+          <Name>w</Name>
           <Type>LREAL</Type>
           <BitSize>64</BitSize>
-        </Parameter>
+        </Local>
         <Properties>
           <Property>
             <Name>property</Name>
@@ -9819,6 +9762,29 @@
         <ReturnBitSize>64</ReturnBitSize>
       </Method>
       <Method>
+        <Name>CrossVec3</Name>
+        <Parameter>
+          <Name>iVec3</Name>
+          <Type>I_Vec3</Type>
+          <BitSize>64</BitSize>
+        </Parameter>
+        <Local>
+          <Name>fxi</Name>
+          <Type>LREAL</Type>
+          <BitSize>64</BitSize>
+        </Local>
+        <Local>
+          <Name>fyi</Name>
+          <Type>LREAL</Type>
+          <BitSize>64</BitSize>
+        </Local>
+        <Local>
+          <Name>fzi</Name>
+          <Type>LREAL</Type>
+          <BitSize>64</BitSize>
+        </Local>
+      </Method>
+      <Method>
         <Name>ToString</Name>
         <ReturnType Namespace="Tc2_System">T_MaxString</ReturnType>
         <ReturnBitSize>2048</ReturnBitSize>
@@ -9827,7 +9793,7 @@
         <Name>AddVec3</Name>
         <Parameter>
           <Name>iVec3</Name>
-          <Type>I_Vec3</Type>
+          <Type>I_Vec4</Type>
           <BitSize>64</BitSize>
         </Parameter>
       </Method>
@@ -9867,10 +9833,22 @@
         <ReturnBitSize>64</ReturnBitSize>
         <Parameter>
           <Name>iVec3</Name>
-          <Comment/>
-          <Type>I_Vec3</Type>
+          <Type>I_Vec4</Type>
           <BitSize>64</BitSize>
         </Parameter>
+      </Method>
+      <Method>
+        <Name>__setx</Name>
+        <Parameter>
+          <Name>x</Name>
+          <Type>LREAL</Type>
+          <BitSize>64</BitSize>
+        </Parameter>
+        <Properties>
+          <Property>
+            <Name>property</Name>
+          </Property>
+        </Properties>
       </Method>
       <Method>
         <Name>__sety</Name>
@@ -9904,31 +9882,585 @@
         <ReturnBitSize>8</ReturnBitSize>
         <Parameter>
           <Name>iVec3</Name>
-          <Type>I_Vec3</Type>
+          <Type>I_Vec4</Type>
           <BitSize>64</BitSize>
         </Parameter>
       </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_AxisAngleQuat_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
       <Method>
-        <Name>CrossVec3</Name>
-        <Parameter>
-          <Name>iVec3</Name>
-          <Type>I_Vec3</Type>
-          <BitSize>64</BitSize>
-        </Parameter>
+        <Name>TestInputRadians0AxisExpectErrorIdentityQuat</Name>
         <Local>
-          <Name>fxi</Name>
-          <Type>LREAL</Type>
-          <BitSize>64</BitSize>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
-          <Name>fyi</Name>
-          <Type>LREAL</Type>
-          <BitSize>64</BitSize>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
-          <Name>fzi</Name>
-          <Type>LREAL</Type>
-          <BitSize>64</BitSize>
+          <Name>bError</Name>
+          <Type>BOOL</Type>
+          <BitSize>8</BitSize>
+        </Local>
+        <Local>
+          <Name>sErrorMsg</Name>
+          <Type Namespace="Tc2_System">T_MaxString</Type>
+          <BitSize>2048</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestInputRadiansAxisExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbQ2</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbQ3</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV2</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV3</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>bError1</Name>
+          <Type>BOOL</Type>
+          <BitSize>8</BitSize>
+        </Local>
+        <Local>
+          <Name>bError2</Name>
+          <Type>BOOL</Type>
+          <BitSize>8</BitSize>
+        </Local>
+        <Local>
+          <Name>bError3</Name>
+          <Type>BOOL</Type>
+          <BitSize>8</BitSize>
+        </Local>
+        <Local>
+          <Name>sErrorMsg1</Name>
+          <Type Namespace="Tc2_System">T_MaxString</Type>
+          <BitSize>2048</BitSize>
+        </Local>
+        <Local>
+          <Name>sErrorMsg2</Name>
+          <Type Namespace="Tc2_System">T_MaxString</Type>
+          <BitSize>2048</BitSize>
+        </Local>
+        <Local>
+          <Name>sErrorMsg3</Name>
+          <Type Namespace="Tc2_System">T_MaxString</Type>
+          <BitSize>2048</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_Cross_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestInputVec3ExpectCorrectResult</Name>
+        <Local>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV2</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV3</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_Dot_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestInputVec3ExpectCorrectResult</Name>
+        <Local>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV2</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV3</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_EulerToQuat_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestRandInputOrderYZYPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderZXZFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderXYXPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderZYXFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderYXZPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderXZYFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderYXYFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderYXYPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderZYZPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderZYXPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderYZXPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderXYZPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderXZXFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderYXZFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderZXYFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderYZYFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderZXYPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderYZXFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderXYXFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderZXZPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderXZYPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderZYZFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderXZXPointExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestRandInputOrderXYZFrameExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_MulQuat_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestInputVec4ExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbQ2</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbQ3</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_NormalizedQuat_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestInputVec4ExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>bError</Name>
+          <Type>BOOL</Type>
+          <BitSize>8</BitSize>
+        </Local>
+        <Local>
+          <Name>sErrorMsg</Name>
+          <Type Namespace="Tc2_System">T_MaxString</Type>
+          <BitSize>2048</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestNormalizeBy0ExpectErrorUnchanged</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>bError</Name>
+          <Type>BOOL</Type>
+          <BitSize>8</BitSize>
+        </Local>
+        <Local>
+          <Name>sErrorMsg</Name>
+          <Type Namespace="Tc2_System">T_MaxString</Type>
+          <BitSize>2048</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_NormalizedVec3_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestInputVec3ExpectCorrectResult</Name>
+        <Local>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>bError</Name>
+          <Type>BOOL</Type>
+          <BitSize>8</BitSize>
+        </Local>
+        <Local>
+          <Name>sErrorMsg</Name>
+          <Type Namespace="Tc2_System">T_MaxString</Type>
+          <BitSize>2048</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestNormalizeBy0ExpectErrorUnchanged</Name>
+        <Local>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>bError</Name>
+          <Type>BOOL</Type>
+          <BitSize>8</BitSize>
+        </Local>
+        <Local>
+          <Name>sErrorMsg</Name>
+          <Type Namespace="Tc2_System">T_MaxString</Type>
+          <BitSize>2048</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_NormSqVec3_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestInputVec3ExpectCorrectResult</Name>
+        <Local>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV2</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_NormSqVec4_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestInputVec4ExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbQ2</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_NormVec3_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestInputVec3ExpectCorrectResult</Name>
+        <Local>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV2</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_NormVec4_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestInputVec4ExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbQ2</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
         </Local>
       </Method>
       <Properties>
@@ -10167,24 +10699,6 @@
         </Local>
       </Method>
       <Method>
-        <Name>TestDotVec3ExpectCorrectResult</Name>
-        <Local>
-          <Name>fbV1</Name>
-          <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
-        </Local>
-        <Local>
-          <Name>fbV2</Name>
-          <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
-        </Local>
-        <Local>
-          <Name>fbV3</Name>
-          <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
-        </Local>
-      </Method>
-      <Method>
         <Name>TestDivQuatBy0ExpectErrorUnchanged</Name>
         <Local>
           <Name>fbQ1</Name>
@@ -10223,7 +10737,7 @@
         <Local>
           <Name>fbV1</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>sExpected</Name>
@@ -10236,7 +10750,7 @@
         <Local>
           <Name>fbV1</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>bError</Name>
@@ -10254,12 +10768,12 @@
         <Local>
           <Name>fbV1</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>fbV2</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
       </Method>
       <Method>
@@ -10267,12 +10781,12 @@
         <Local>
           <Name>fbV1</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>fbV2</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
       </Method>
       <Method>
@@ -10280,32 +10794,30 @@
         <Local>
           <Name>fbV1</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>fbV2</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>fbV3</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
       </Method>
       <Method>
         <Name>TestGetNormSqExpectCorrectResult</Name>
         <Local>
           <Name>fbV1</Name>
-          <Comment/>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>fbV2</Name>
-          <Comment/>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
       </Method>
       <Method>
@@ -10313,7 +10825,7 @@
         <Local>
           <Name>fbV1</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>bError</Name>
@@ -10331,7 +10843,7 @@
         <Local>
           <Name>fbV1</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>bError</Name>
@@ -10349,7 +10861,7 @@
         <Local>
           <Name>fbV1</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>bError</Name>
@@ -10367,17 +10879,35 @@
         <Local>
           <Name>fbV1</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>fbV2</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>fbV3</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>TestDotVec3ExpectCorrectResult</Name>
+        <Local>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV2</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV3</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
         </Local>
       </Method>
       <Method>
@@ -10385,17 +10915,17 @@
         <Local>
           <Name>fbV1</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>fbV2</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
         <Local>
           <Name>fbV3</Name>
           <Type>FB_Vec3</Type>
-          <BitSize>320</BitSize>
+          <BitSize>384</BitSize>
         </Local>
       </Method>
       <Properties>
@@ -10867,6 +11397,30 @@
         </Property>
         <Property>
           <Name>hide</Name>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
+      <Name>FB_RotateVec3_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestRandInputExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
         </Property>
       </Properties>
     </DataType>
@@ -13485,6 +14039,61 @@
     <DataType>
       <Name>PRG_Test</Name>
       <SubItem>
+        <Name Static="true">fbAxisAngleQuatTest</Name>
+        <Type>FB_AxisAngleQuat_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
+        <Name Static="true">fbCrossTest</Name>
+        <Type>FB_Cross_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
+        <Name Static="true">fbDotTest</Name>
+        <Type>FB_Dot_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
+        <Name Static="true">fbEulerToQuatTest</Name>
+        <Type>FB_EulerToQuat_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
+        <Name Static="true">fbMulQuatTest</Name>
+        <Type>FB_MulQuat_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
+        <Name Static="true">fbNormalizedQuatTest</Name>
+        <Type>FB_NormalizedQuat_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
+        <Name Static="true">fbNormalizedVec3Test</Name>
+        <Type>FB_NormalizedVec3_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
+        <Name Static="true">fbNormSqVec3Test</Name>
+        <Type>FB_NormSqVec3_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
+        <Name Static="true">fbNormSqVec4Test</Name>
+        <Type>FB_NormSqVec4_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
+        <Name Static="true">fbNormVec3Test</Name>
+        <Type>FB_NormVec3_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
+        <Name Static="true">fbNormVec4Test</Name>
+        <Type>FB_NormVec4_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
         <Name Static="true">fbQuaternionTest</Name>
         <Type>FB_Quaternion_Test</Type>
         <BitSize>33561984</BitSize>
@@ -13492,6 +14101,11 @@
       <SubItem>
         <Name Static="true">fbVec3Test</Name>
         <Type>FB_Vec3_Test</Type>
+        <BitSize>33561984</BitSize>
+      </SubItem>
+      <SubItem>
+        <Name Static="true">fbRotateVec3</Name>
+        <Type>FB_RotateVec3_Test</Type>
         <BitSize>33561984</BitSize>
       </SubItem>
     </DataType>
@@ -13527,6 +14141,17 @@
         </Property>
       </Properties>
     </DataType>
+    <DataType>
+      <Name>GVL_Constants</Name>
+      <SubItem>
+        <Name Static="true">PI</Name>
+        <Type>LREAL</Type>
+        <BitSize>64</BitSize>
+        <Default>
+          <Value>3.14159265358979</Value>
+        </Default>
+      </SubItem>
+    </DataType>
   </DataTypes>
   <Modules>
     <Module GUID="{C25680E3-5ED7-4BF3-B24E-80AA9C60FFB4}" TcSmClass="TComPlcObjDef" TargetPlatform="TwinCAT OS (x64)">
@@ -13560,7 +14185,7 @@
           <AreaNo AreaType="Internal" CreateSymbols="true">3</AreaNo>
           <Name>PlcTask Internal</Name>
           <ContextId>0</ContextId>
-          <ByteSize>105578496</ByteSize>
+          <ByteSize>161087488</ByteSize>
           <Symbol>
             <Name>Global_Version.stLibVersion_Tc2_Standard</Name>
             <BitSize>288</BitSize>
@@ -17768,16 +18393,82 @@
             <BitOffs>633520488</BitOffs>
           </Symbol>
           <Symbol>
+            <Name>PRG_Test.fbAxisAngleQuatTest</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_AxisAngleQuat_Test</BaseType>
+            <BitOffs>633625920</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbCrossTest</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_Cross_Test</BaseType>
+            <BitOffs>667187904</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbDotTest</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_Dot_Test</BaseType>
+            <BitOffs>700749888</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbEulerToQuatTest</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_EulerToQuat_Test</BaseType>
+            <BitOffs>734311872</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbMulQuatTest</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_MulQuat_Test</BaseType>
+            <BitOffs>767873856</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbNormalizedQuatTest</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_NormalizedQuat_Test</BaseType>
+            <BitOffs>801435840</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbNormalizedVec3Test</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_NormalizedVec3_Test</BaseType>
+            <BitOffs>834997824</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbNormSqVec3Test</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_NormSqVec3_Test</BaseType>
+            <BitOffs>868559808</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbNormSqVec4Test</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_NormSqVec4_Test</BaseType>
+            <BitOffs>902121792</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbNormVec3Test</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_NormVec3_Test</BaseType>
+            <BitOffs>935683776</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbNormVec4Test</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_NormVec4_Test</BaseType>
+            <BitOffs>969245760</BitOffs>
+          </Symbol>
+          <Symbol>
             <Name>PRG_Test.fbQuaternionTest</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_Quaternion_Test</BaseType>
-            <BitOffs>633576000</BitOffs>
+            <BitOffs>1002807744</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbVec3Test</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_Vec3_Test</BaseType>
-            <BitOffs>667137984</BitOffs>
+            <BitOffs>1036369728</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_PreventOnlineChangeGvl.PlcProfilerConfigChecksum</Name>
@@ -17791,7 +18482,21 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>700699968</BitOffs>
+            <BitOffs>1069931712</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>GVL_Constants.PI</Name>
+            <BitSize>64</BitSize>
+            <BaseType>LREAL</BaseType>
+            <Default>
+              <Value>3.14159265358979</Value>
+            </Default>
+            <Properties>
+              <Property>
+                <Name>TcVarGlobal</Name>
+              </Property>
+            </Properties>
+            <BitOffs>1069932288</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_SystemInfoVarList._AppInfo</Name>
@@ -17805,7 +18510,7 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>700700800</BitOffs>
+            <BitOffs>1069932608</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_SystemInfoVarList._TaskInfo</Name>
@@ -17823,7 +18528,7 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>700702848</BitOffs>
+            <BitOffs>1069934656</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_SystemInfoVarList._TaskPouOid_PlcTask</Name>
@@ -17837,7 +18542,7 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>700703872</BitOffs>
+            <BitOffs>1069935680</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_SystemInfoVarList._TaskOid_PlcTask</Name>
@@ -17851,7 +18556,7 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>700703904</BitOffs>
+            <BitOffs>1069935712</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_SystemInfoVarList.__PlcTask</Name>
@@ -17872,7 +18577,13 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>700703936</BitOffs>
+            <BitOffs>1069935744</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbRotateVec3</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_RotateVec3_Test</BaseType>
+            <BitOffs>1070299008</BitOffs>
           </Symbol>
         </DataArea>
       </DataAreas>
@@ -17885,15 +18596,15 @@
         </Property>
         <Property>
           <Name>ChangeDate</Name>
-          <Value>2024-10-25T18:02:58</Value>
+          <Value>2024-10-26T14:29:33</Value>
         </Property>
         <Property>
           <Name>GeneratedCodeSize</Name>
-          <Value>344064</Value>
+          <Value>442368</Value>
         </Property>
         <Property>
           <Name>GlobalDataSize</Name>
-          <Value>87220224</Value>
+          <Value>137576448</Value>
         </Property>
         <Property>
           <Name>UTF8EncodedStrings</Name>

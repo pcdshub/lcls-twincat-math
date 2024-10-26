@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_NormalizedQuat" Id="{76c43bc9-6826-4a15-bfb4-fdec0249c65e}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_NormalizedQuat : FB_Quaternion
+VAR_INPUT
+    iVec4 : I_Vec4;
+END_VAR
+VAR_OUTPUT
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+VAR
+    fNorm : LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+bError := FALSE;
+sErrorMsg := '';
+
+fNorm := F_NormVec4(iVec4);
+
+IF fNorm = 0.0 THEN
+    bError := TRUE;
+    sErrorMsg := 'Error: cannot normalize a quaternion with a norm of 0.';
+    F_NormalizedQuat.w := iVec4.w;
+    F_NormalizedQuat.x := iVec4.x;
+    F_NormalizedQuat.y := iVec4.y;
+    F_NormalizedQuat.z := iVec4.z;
+    RETURN;
+END_IF
+
+F_NormalizedQuat.w := iVec4.w / fNorm;
+F_NormalizedQuat.x := iVec4.x / fNorm;
+F_NormalizedQuat.y := iVec4.y / fNorm;
+F_NormalizedQuat.z := iVec4.z / fNorm;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -4,7 +4,19 @@
     <Declaration><![CDATA[
 PROGRAM PRG_Test
 VAR
+    fbAxisAngleQuatTest : FB_AxisAngleQuat_Test;
+    fbCrossTest : FB_Cross_Test;
+    fbDotTest : FB_Dot_Test;
+    fbEulerToQuatTest : FB_EulerToQuat_Test;
+    fbMulQuatTest : FB_MulQuat_Test;
+    fbNormalizedQuatTest : FB_NormalizedQuat_Test;
+    fbNormalizedVec3Test : FB_NormalizedVec3_Test;
+    fbNormSqVec3Test : FB_NormSqVec3_Test;
+    fbNormSqVec4Test : FB_NormSqVec4_Test;
+    fbNormVec3Test : FB_NormVec3_Test;
+    fbNormVec4Test : FB_NormVec4_Test;
     fbQuaternionTest : FB_Quaternion_Test;
+    fbRotateVec3 : FB_RotateVec3_Test;
     fbVec3Test : FB_Vec3_Test;
 END_VAR
 ]]></Declaration>

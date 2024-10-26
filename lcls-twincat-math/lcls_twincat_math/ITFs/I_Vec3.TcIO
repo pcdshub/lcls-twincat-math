@@ -1,45 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1">
-  <Itf Name="I_Vec3" Id="{753d82a5-d0c6-4dec-9fc2-1c93361601d8}">
+  <Itf Name="I_Vec3" Id="{38d32cf0-0fb4-4b49-bd99-17bf9ea9d07f}">
     <Declaration><![CDATA[
 INTERFACE I_Vec3
 ]]></Declaration>
-    <Method Name="GetNorm" Id="{319f5ce7-b28d-4443-9fc7-c345e14d479e}">
-      <Declaration><![CDATA[
-METHOD GetNorm : LREAL
-]]></Declaration>
-    </Method>
-    <Method Name="GetNormSq" Id="{d53b76f0-850b-408c-8bb5-161b0e33571b}">
-      <Declaration><![CDATA[
-METHOD GetNormSq : LREAL
-]]></Declaration>
-    </Method>
-    <Method Name="ToString" Id="{37d364b3-15dd-4ff9-93f4-a13a02319fd5}">
-      <Declaration><![CDATA[
-METHOD ToString : T_MaxString
-]]></Declaration>
-    </Method>
-    <Property Name="x" Id="{c7a2e018-c666-4e1c-8b2a-9058f358f7d9}">
+    <Property Name="x" Id="{3ef9f0e7-b513-490e-a7f9-8a63c588bd17}">
       <Declaration><![CDATA[
 PROPERTY x : LREAL
 ]]></Declaration>
-      <Get Name="Get" Id="{4b967571-0c47-4fb6-b35a-78c249e77788}">
+      <Get Name="Get" Id="{5f4573c2-ffb2-4617-a999-c3533c180354}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
-    <Property Name="y" Id="{58946c8a-b3a3-461f-88b7-554df5ec24a0}">
+    <Property Name="y" Id="{c9faf2cf-36db-4ccb-bf28-a250e4fcbbf0}">
       <Declaration><![CDATA[
 PROPERTY y : LREAL
 ]]></Declaration>
-      <Get Name="Get" Id="{2b2a97e1-cf1c-4f29-ba22-42e18f13d9a4}">
+      <Get Name="Get" Id="{67fa2b96-9501-48c8-a0b2-4af387a3c235}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
-    <Property Name="z" Id="{59aaa452-ddf2-4b74-9579-651172465b95}">
+    <Property Name="z" Id="{d5ef6750-ec6c-49ae-95ba-6be7833f2585}">
       <Declaration><![CDATA[
 PROPERTY z : LREAL
 ]]></Declaration>
-      <Get Name="Get" Id="{6b9c7a96-8fcf-4aad-ba76-f3de6758dba2}">
+      <Get Name="Get" Id="{3b254f49-0d7c-49e0-92db-9491a46b09c2}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>

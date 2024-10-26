@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_NormVec4_Test" Id="{1454f646-d4c0-4942-9627-857c27551064}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_NormVec4_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestInputVec4ExpectCorrectResult();
+]]></ST>
+    </Implementation>
+    <Method Name="TestInputVec4ExpectCorrectResult" Id="{ccae1226-c634-4a07-ad8d-f40596f5fd6b}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestInputVec4ExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+    fbQ2 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestInputVec4ExpectCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+fbQ2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+
+AssertEquals_LREAL(
+    Expected := 5.477225575051661,
+    Actual := F_NormVec4(fbQ1),
+    Delta := 1e-10,
+    Message := 'Norm was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.218044907339020,
+    Actual := F_NormVec4(fbQ2),
+    Delta := 1e-10,
+    Message := 'Norm was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

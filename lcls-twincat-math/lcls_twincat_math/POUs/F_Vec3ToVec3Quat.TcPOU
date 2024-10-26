@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_Vec3ToVec3Quat" Id="{22d4815c-6fcf-4bc5-936c-cf4d2805d64f}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_Vec3ToVec3Quat : FB_Quaternion
+VAR_INPUT
+    iVec3Start : I_Vec3;
+    iVec3End : I_Vec3;
+END_VAR
+VAR_OUTPUT
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+VAR
+    fDot : LREAL;
+    fbVec3Cross : FB_Vec3;
+    fbVec3Unit : FB_Vec3;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+fDot := F_Dot(iVec3Start, iVec3End);
+
+IF fDot = 1.0 THEN
+    F_Vec3ToVec3Quat.w := -1.0;
+    F_Vec3ToVec3Quat.x := 0.0;
+    F_Vec3ToVec3Quat.y := 0.0;
+    F_Vec3ToVec3Quat.z := 0.0;
+    RETURN;
+ELSIF fDot = -1.0 THEN
+    fbVec3Unit := F_NormalizedVec3(iVec3End);
+    fbVec3Cross := F_Cross(iVec3Start, fbVec3Unit);
+    F_Vec3ToVec3Quat := F_AxisAngleQuat(
+        iAxis := fbVec3Cross,
+        fRadians := GVL_Constants.PI+2
+    );
+    RETURN;
+END_IF
+
+F_Vec3ToVec3Quat.w := -1 + fDot;
+
+fbVec3Cross := F_Cross(iVec3Start, iVec3End);
+
+F_Vec3ToVec3Quat.x := -fbVec3Cross.x;
+F_Vec3ToVec3Quat.y := -fbVec3Cross.y;
+F_Vec3ToVec3Quat.z := -fbVec3Cross.z;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -2,7 +2,7 @@
 <TcPlcObject Version="1.1.0.1">
   <POU Name="FB_Quaternion" Id="{368e3e81-21d8-4842-8003-27045a72af0c}" SpecialFunc="None">
     <Declaration><![CDATA[
-FUNCTION_BLOCK FB_Quaternion IMPLEMENTS I_Quaternion
+FUNCTION_BLOCK FB_Quaternion IMPLEMENTS I_Vec4
 VAR
     fw : LREAL;
     fx : LREAL;
@@ -19,7 +19,7 @@ END_VAR
       <Declaration><![CDATA[
 METHOD AddQuat
 VAR_INPUT
-    iQuaternion	: I_Quaternion;
+    iQuaternion	: I_Vec4;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -35,7 +35,7 @@ z := z + iQuaternion.z;
       <Declaration><![CDATA[
 METHOD DivQuat
 VAR_INPUT
-    iQuaternion	: I_Quaternion;
+    iQuaternion	: I_Vec4;
 END_VAR
 VAR_OUTPUT
     bError : BOOL;
@@ -54,7 +54,7 @@ END_VAR
 bError := FALSE;
 sErrorMsg := '';
 
-fNormSq := iQuaternion.GetNormSq();
+fNormSq := F_NormSqVec4(iQuaternion);
 
 IF fNormSq = 0.0 THEN
     bError := TRUE;
@@ -107,7 +107,7 @@ z := z / fScalar;
       <Declaration><![CDATA[
 METHOD EqualsQuat : BOOL
 VAR_INPUT
-    iQuaternion	: I_Quaternion;
+    iQuaternion	: I_Vec4;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -156,7 +156,7 @@ z := -z;
       <Declaration><![CDATA[
 METHOD MulQuat
 VAR_INPUT
-    iQuaternion	: I_Quaternion;
+    iQuaternion	: I_Vec4;
 END_VAR
 VAR
     fwi : LREAL;

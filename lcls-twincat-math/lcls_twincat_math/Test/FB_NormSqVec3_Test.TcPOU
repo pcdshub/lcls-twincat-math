@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_NormSqVec3_Test" Id="{c5533660-6860-4af6-9930-61dff97330f0}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_NormSqVec3_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestInputVec3ExpectCorrectResult();
+]]></ST>
+    </Implementation>
+    <Method Name="TestInputVec3ExpectCorrectResult" Id="{0d007c75-4997-4756-90dc-e619076aa98d}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestInputVec3ExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+    fbV2 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestInputVec3ExpectCorrectResult');
+
+fbV1.Set(1, 2, 3);
+fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+
+AssertEquals_LREAL(
+    Expected := 14.0,
+    Actual := F_NormSqVec3(fbV1),
+    Delta := 1e-10,
+    Message := 'Norm squared was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.047533535429135,
+    Actual := F_NormSqVec3(fbV2),
+    Delta := 1e-10,
+    Message := 'Norm squared was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

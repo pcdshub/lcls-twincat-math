@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_MulQuat" Id="{4f17de7b-3460-4a8b-9b37-d401a85774f5}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_MulQuat : FB_Quaternion
+VAR_INPUT
+    iQuatL	: I_Vec4;
+    iQuatR	: I_Vec4;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+F_MulQuat.w := (iQuatL.w * iQuatR.w) - (iQuatL.x * iQuatR.x) - (iQuatL.y * iQuatR.y) - (iQuatL.z * iQuatR.z);
+F_MulQuat.x := (iQuatL.w * iQuatR.x) + (iQuatL.x * iQuatR.w) + (iQuatL.y * iQuatR.z) - (iQuatL.z * iQuatR.y);
+F_MulQuat.y := (iQuatL.w * iQuatR.y) - (iQuatL.x * iQuatR.z) + (iQuatL.y * iQuatR.w) + (iQuatL.z * iQuatR.x);
+F_MulQuat.z := (iQuatL.w * iQuatR.z) + (iQuatL.x * iQuatR.y) - (iQuatL.y * iQuatR.x) + (iQuatL.z * iQuatR.w);
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_Cross_Test" Id="{b752fa38-e723-4c26-bf1c-5a8bc00ca01d}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_Cross_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestInputVec3ExpectCorrectResult();
+]]></ST>
+    </Implementation>
+    <Method Name="TestInputVec3ExpectCorrectResult" Id="{78422ab2-7e02-4842-8f10-3ba93cb9c30a}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestInputVec3ExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+    fbV2 : FB_Vec3;
+    fbV3 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestInputVec3ExpectCorrectResult');
+
+fbV1.Set(1, 2, 3);
+fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+fbV3.Set(2, -1, -5);
+
+fbV1 := F_Cross(fbV1, fbV2);
+fbV3 := F_Cross(fbV3, fbV1);
+
+// V1
+AssertEquals_LREAL(
+    Expected := 0.063391442155309,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.633914421553089,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.443740095087162,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+// V2
+AssertEquals_LREAL(
+    Expected := 0.217115689381933,
+    Actual := fbV2.x,
+    Delta := 0.0,
+    Message := 'Vector 2 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.00950871632329635,
+    Actual := fbV2.y,
+    Delta := 0.0,
+    Message := 'Vector 2 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.01743264659271,
+    Actual := fbV2.z,
+    Delta := 0.0,
+    Message := 'Vector 2 [z] was not the expected value.'
+);
+
+// V3
+AssertEquals_LREAL(
+    Expected := 3.613312202852607,
+    Actual := fbV3.x,
+    Delta := 1e-10,
+    Message := 'Vector 3 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.570522979397780,
+    Actual := fbV3.y,
+    Delta := 1e-10,
+    Message := 'Vector 3 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.331220285261487,
+    Actual := fbV3.z,
+    Delta := 1e-10,
+    Message := 'Vector 3 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

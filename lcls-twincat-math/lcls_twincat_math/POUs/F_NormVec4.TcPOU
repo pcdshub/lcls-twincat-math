@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_NormVec4" Id="{ac45f6af-5f3f-4ad4-9ea6-4799a1a4a160}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_NormVec4 : LREAL
+VAR_INPUT
+    iVec4 : I_Vec4;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+F_NormVec4 := SQRT(F_NormSqVec4(iVec4));
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

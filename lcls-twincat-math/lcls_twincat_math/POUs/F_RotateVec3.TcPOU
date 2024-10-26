@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_RotateVec3" Id="{a341ae59-fa7c-49ee-bd4f-c65f29acf2d6}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_RotateVec3 : FB_Vec3
+VAR_INPUT
+    iQuat : I_Vec4;
+    iVec3 : I_Vec3;
+END_VAR
+VAR
+    fbQ : FB_Quaternion;
+    fbV : FB_Vec3;
+    fbQc : FB_Quaternion;
+    fbQv : FB_Quaternion;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+fbQ.Set(iQuat.w, iQuat.x, iQuat.y, iQuat.z);
+fbQ.Normalize();
+
+fbV.Set(iVec3.x, iVec3.y, iVec3.z);
+
+fbQc := fbQ;
+fbQc.MakeConj();
+
+fbQv := F_MulQuat(fbV, fbQ);
+fbQv := F_MulQuat(fbQc, fbQv);
+
+F_RotateVec3.x := fbQv.x;
+F_RotateVec3.y := fbQv.y;
+F_RotateVec3.z := fbQv.z;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

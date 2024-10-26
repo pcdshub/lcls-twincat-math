@@ -16,8 +16,6 @@ TestDivScalarBy0ExpectErrorUnchanged();
 
 TestDivScalarExpectNoErrorCorrectResult();
 
-TestDotVec3ExpectCorrectResult();
-
 TestEqualsQuatExpectCorrectResult();
 
 TestGetNormExpectCorrectResult();
@@ -511,41 +509,6 @@ AssertEquals_LREAL(
     Actual := fbQ1.z,
     Delta := 1e-10,
     Message := 'Quaternion 1 [z] was not the expected value.'
-);
-
-TEST_FINISHED();
-]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="TestDotVec3ExpectCorrectResult" Id="{6844fea3-f9f2-4bc4-9628-3dcaf6627885}">
-      <Declaration><![CDATA[
-METHOD PRIVATE TestDotVec3ExpectCorrectResult
-VAR
-    fbV1 : FB_Vec3;
-    fbV2 : FB_Vec3;
-    fbV3 : FB_Vec3;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[
-TEST('TestDotVec3ExpectCorrectResult');
-
-fbV1.Set(1, 2, 3);
-fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
-fbV3.Set(43, 12, 856);
-
-AssertEquals_LREAL(
-    Expected := 0.250396196513470,
-    Actual := fbV1.DotVec3(fbV2),
-    Delta := 1e-10,
-    Message := 'Dot product was not the expected value.'
-);
-
-AssertEquals_LREAL(
-    Expected := 24.144215530903324,
-    Actual := fbV2.DotVec3(fbV3),
-    Delta := 1e-10,
-    Message := 'Dot product was not the expected value.'
 );
 
 TEST_FINISHED();

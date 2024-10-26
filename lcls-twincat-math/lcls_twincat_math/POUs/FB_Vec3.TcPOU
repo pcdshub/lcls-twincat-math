@@ -2,7 +2,7 @@
 <TcPlcObject Version="1.1.0.1">
   <POU Name="FB_Vec3" Id="{c09dfe87-9fa9-4800-966a-c9fa2f01d9b6}" SpecialFunc="None">
     <Declaration><![CDATA[
-FUNCTION_BLOCK FB_Vec3 IMPLEMENTS I_Vec3
+FUNCTION_BLOCK FB_Vec3 IMPLEMENTS I_Vec3, I_Vec4
 VAR
     fx : LREAL;
     fy : LREAL;
@@ -18,7 +18,7 @@ END_VAR
       <Declaration><![CDATA[
 METHOD AddVec3
 VAR_INPUT
-    iVec3	: I_Vec3;
+    iVec3	: I_Vec4;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -85,7 +85,7 @@ z := z / fScalar;
       <Declaration><![CDATA[
 METHOD DotVec3 : LREAL
 VAR_INPUT
-    iVec3	: I_Vec3;
+    iVec3	: I_Vec4;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -98,7 +98,7 @@ DotVec3 := (x * iVec3.x) + (y * iVec3.y) + (z * iVec3.z);
       <Declaration><![CDATA[
 METHOD EqualsVec3 : BOOL
 VAR_INPUT
-    iVec3 : I_Vec3;
+    iVec3 : I_Vec4;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -195,6 +195,21 @@ ToString := CONCAT(ToString, ')');
 ]]></ST>
       </Implementation>
     </Method>
+    <Property Name="w" Id="{b43d0344-660e-4424-8e2e-47e2501754a5}">
+      <Declaration><![CDATA[
+PROPERTY w : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{86211403-11b6-4e3d-afb2-8cf80e41995e}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+w := 0.0;
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Property Name="x" Id="{40d86467-830b-482c-80e3-8f3d5363a11c}">
       <Declaration><![CDATA[
 PROPERTY x : LREAL

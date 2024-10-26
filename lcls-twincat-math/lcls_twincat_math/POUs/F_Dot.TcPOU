@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_Dot" Id="{a35644cd-42f2-4e13-afbe-0511b89cb0e4}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_Dot : LREAL
+VAR_INPUT
+    iVec3L : I_Vec3;
+    iVec3R : I_Vec3;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+F_Dot := (iVec3L.x * iVec3R.x) + (iVec3L.y * iVec3R.y) + (iVec3L.z * iVec3R.z);
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
