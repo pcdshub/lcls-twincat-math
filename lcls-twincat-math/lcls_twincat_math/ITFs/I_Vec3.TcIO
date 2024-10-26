@@ -4,6 +4,21 @@
     <Declaration><![CDATA[
 INTERFACE I_Vec3
 ]]></Declaration>
+    <Method Name="GetNorm" Id="{319f5ce7-b28d-4443-9fc7-c345e14d479e}">
+      <Declaration><![CDATA[
+METHOD GetNorm : LREAL
+]]></Declaration>
+    </Method>
+    <Method Name="GetNormSq" Id="{d53b76f0-850b-408c-8bb5-161b0e33571b}">
+      <Declaration><![CDATA[
+METHOD GetNormSq : LREAL
+]]></Declaration>
+    </Method>
+    <Method Name="ToString" Id="{37d364b3-15dd-4ff9-93f4-a13a02319fd5}">
+      <Declaration><![CDATA[
+METHOD ToString : T_MaxString
+]]></Declaration>
+    </Method>
     <Property Name="x" Id="{c7a2e018-c666-4e1c-8b2a-9058f358f7d9}">
       <Declaration><![CDATA[
 PROPERTY x : LREAL

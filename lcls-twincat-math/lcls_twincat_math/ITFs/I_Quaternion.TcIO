@@ -2,7 +2,7 @@
 <TcPlcObject Version="1.1.0.1">
   <Itf Name="I_Quaternion" Id="{d6831b85-2c4c-4d0a-b783-213a1dbe68b8}">
     <Declaration><![CDATA[
-INTERFACE I_Quaternion EXTENDS I_Vec3
+INTERFACE I_Quaternion
 ]]></Declaration>
     <Method Name="GetNorm" Id="{2ff59caa-1a8e-4d8e-8340-5d7de889d133}">
       <Declaration><![CDATA[
@@ -14,7 +14,7 @@ METHOD GetNorm : LREAL
 METHOD GetNormSq : LREAL
 ]]></Declaration>
     </Method>
-    <Method Name="ToString" Id="{7fe2a3af-9032-4aca-a79a-10fdb0829092}">
+    <Method Name="ToString" Id="{b259c3aa-8217-4bd1-aeee-d6eb659fa7d1}">
       <Declaration><![CDATA[
 METHOD ToString : T_MaxString
 ]]></Declaration>
@@ -24,6 +24,30 @@ METHOD ToString : T_MaxString
 PROPERTY w : LREAL
 ]]></Declaration>
       <Get Name="Get" Id="{8f4d5b69-a2e5-49ed-8aef-4c45ad79831d}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="x" Id="{56eeaf1d-5bbb-48cf-8238-3c241aab42ea}">
+      <Declaration><![CDATA[
+PROPERTY x : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{a553d82c-7968-4025-a8a0-75a845fd2364}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="y" Id="{3c928912-1d5a-4787-b094-1d4c4d3f69a6}">
+      <Declaration><![CDATA[
+PROPERTY y : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{8460eb31-b5ae-4d41-a2fd-301f1d48fa0c}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="z" Id="{79d3f71a-6337-44c6-b3ca-3387c045552b}">
+      <Declaration><![CDATA[
+PROPERTY z : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{9239d992-e814-4b2c-ab53-fcb33ccb1074}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>

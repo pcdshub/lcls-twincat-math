@@ -3,11 +3,10 @@
   <POU Name="FB_Vec3" Id="{c09dfe87-9fa9-4800-966a-c9fa2f01d9b6}" SpecialFunc="None">
     <Declaration><![CDATA[
 FUNCTION_BLOCK FB_Vec3 IMPLEMENTS I_Vec3
-VAR_INPUT
-END_VAR
-VAR_OUTPUT
-END_VAR
 VAR
+    fx : LREAL;
+    fy : LREAL;
+    fz : LREAL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -17,35 +16,73 @@ END_VAR
     </Implementation>
     <Method Name="AddVec3" Id="{ef14f849-964d-41c6-b93c-957ccd6460f6}">
       <Declaration><![CDATA[
-{warning 'Add method implementation '}
-METHOD AddVec3 : I_Vec3
+METHOD AddVec3
 VAR_INPUT
     iVec3	: I_Vec3;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-
+x := x + iVec3.x;
+y := y + iVec3.y;
+z := z + iVec3.z;
 ]]></ST>
       </Implementation>
     </Method>
     <Method Name="CrossVec3" Id="{61d300cc-4420-46cd-b758-e15093cacda1}">
       <Declaration><![CDATA[
-{warning 'Add method implementation '}
-METHOD CrossVec3 : I_Vec3
+METHOD CrossVec3
 VAR_INPUT
     iVec3	: I_Vec3;
+END_VAR
+VAR
+    fxi : LREAL;
+    fyi : LREAL;
+    fzi : LREAL;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
+fxi := x;
+fyi := y;
+fzi := z;
 
+x := (fyi * iVec3.z) - (fzi * iVec3.y);
+y := (fzi * iVec3.x) - (fxi * iVec3.z);
+z := (fxi * iVec3.y) - (fyi * iVec3.x);
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="DivScalar" Id="{dab15bc3-686a-4a9e-825e-34b647e354d9}">
+      <Declaration><![CDATA[
+METHOD DivScalar
+VAR_INPUT
+    fScalar : LREAL;
+END_VAR
+VAR_OUTPUT
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+bError := FALSE;
+sErrorMsg := '';
+
+IF fScalar = 0.0 THEN
+    bError := TRUE;
+    sErrorMsg := 'Error: attempted division of vector by scalar of 0.';
+    RETURN;
+END_IF
+
+x := x / fScalar;
+y := y / fScalar;
+z := z / fScalar;
 ]]></ST>
       </Implementation>
     </Method>
     <Method Name="DotVec3" Id="{96055ecf-9626-4c41-8898-10ce4518584b}">
       <Declaration><![CDATA[
-{warning 'Add method implementation '}
 METHOD DotVec3 : LREAL
 VAR_INPUT
     iVec3	: I_Vec3;
@@ -53,93 +90,185 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-
+DotVec3 := (x * iVec3.x) + (y * iVec3.y) + (z * iVec3.z);
 ]]></ST>
       </Implementation>
     </Method>
-    <Method Name="GetMag" Id="{9a7fc225-e930-434a-aa42-0d79876ee438}">
+    <Method Name="EqualsVec3" Id="{eb6b7e2e-801b-46b5-bde4-0b1ff27e10e0}">
       <Declaration><![CDATA[
-{warning 'Add method implementation '}
-METHOD GetMag : LREAL
+METHOD EqualsVec3 : BOOL
+VAR_INPUT
+    iVec3 : I_Vec3;
+END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-
+EqualsVec3 := x = iVec3.x AND
+              y = iVec3.y AND
+              z = iVec3.z;
 ]]></ST>
       </Implementation>
     </Method>
-    <Method Name="GetNorm" Id="{29814131-65a5-4ed7-b948-b70d7762daf7}">
+    <Method Name="GetNorm" Id="{9a7fc225-e930-434a-aa42-0d79876ee438}">
       <Declaration><![CDATA[
-{warning 'Add method implementation '}
-METHOD GetNorm : I_Vec3
+METHOD GetNorm : LREAL
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
+GetNorm := SQRT(x*x + y*y + z*z);
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetNormSq" Id="{56bcaac9-1c9f-4d84-9e44-e20fff1f3cc7}">
+      <Declaration><![CDATA[
+METHOD GetNormSq : LREAL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+GetNormSq := x*x + y*y + z*z;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Normalize" Id="{efdb3d81-0dd7-4287-857e-bbecdcf609fc}">
+      <Declaration><![CDATA[
+METHOD Normalize
+VAR_OUTPUT
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+VAR
+    fNorm : LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+bError := FALSE;
+sErrorMsg := '';
 
+fNorm := GetNorm();
+
+IF fNorm = 0.0 THEN
+    bError := TRUE;
+    sErrorMsg := 'Error: cannot normalize a vector with a norm of 0.';
+    RETURN;
+END_IF
+
+x := x / fNorm;
+y := y / fNorm;
+z := z / fNorm;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Set" Id="{46859cf8-2f93-4aad-aa44-e3a03872d507}">
+      <Declaration><![CDATA[
+METHOD Set
+VAR_INPUT
+    x : LREAL;
+    y : LREAL;
+    z : LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+THIS^.x := x;
+THIS^.y := y;
+THIS^.z := z;
 ]]></ST>
       </Implementation>
     </Method>
     <Method Name="ToString" Id="{c35ca60f-311e-4b45-99f0-9b9fae4ea9dd}">
       <Declaration><![CDATA[
-{warning 'Add method implementation '}
-METHOD ToString : STRING
+METHOD ToString : T_MaxString
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
+ToString := '(';
 
+ToString := CONCAT(ToString, LREAL_TO_STRING(x));
+ToString := CONCAT(ToString, ', ');
+
+ToString := CONCAT(ToString, LREAL_TO_STRING(y));
+ToString := CONCAT(ToString, ', ');
+
+ToString := CONCAT(ToString, LREAL_TO_STRING(z));
+ToString := CONCAT(ToString, ')');
 ]]></ST>
       </Implementation>
     </Method>
-    <Property Name="x" Id="{d1132b1f-8d78-4d71-868f-4b5ca1d3abf5}">
+    <Property Name="x" Id="{40d86467-830b-482c-80e3-8f3d5363a11c}">
       <Declaration><![CDATA[
-{warning 'Add property implementation'}
 PROPERTY x : LREAL
 ]]></Declaration>
-      <Get Name="Get" Id="{f7878e76-22eb-42c2-97b3-b87e70fce12d}">
+      <Get Name="Get" Id="{e751db80-c7c0-429e-8040-437a4b4d1886}">
         <Declaration><![CDATA[
-VAR
-END_VAR
+
 ]]></Declaration>
         <Implementation>
           <ST><![CDATA[
-
+x := fx;
 ]]></ST>
         </Implementation>
       </Get>
+      <Set Name="Set" Id="{127b5821-add5-4e2c-8134-dbffb110e7ed}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+fx := x;
+]]></ST>
+        </Implementation>
+      </Set>
     </Property>
-    <Property Name="y" Id="{9bbfc62e-5928-4dd9-9c9f-a12c08bc7ea3}">
+    <Property Name="y" Id="{6e4073a5-323b-45c8-9a86-c86b1ef3eb1a}">
       <Declaration><![CDATA[
-{warning 'Add property implementation'}
 PROPERTY y : LREAL
 ]]></Declaration>
-      <Get Name="Get" Id="{8be5870a-3987-4750-b25a-35c6debc60c5}">
+      <Get Name="Get" Id="{3461b6bd-d499-48be-9922-d4c133593c40}">
         <Declaration><![CDATA[
-VAR
-END_VAR
+
 ]]></Declaration>
         <Implementation>
           <ST><![CDATA[
-
+y := fy;
 ]]></ST>
         </Implementation>
       </Get>
+      <Set Name="Set" Id="{0bec60d4-0399-47cb-8c1c-27ca855d0ea6}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+fy := y;
+]]></ST>
+        </Implementation>
+      </Set>
     </Property>
-    <Property Name="z" Id="{668d9da2-5ed3-4ecb-9b12-26772daecde7}">
+    <Property Name="z" Id="{b91c764e-56e1-417c-9df6-702b8da9d82c}">
       <Declaration><![CDATA[
-{warning 'Add property implementation'}
 PROPERTY z : LREAL
 ]]></Declaration>
-      <Get Name="Get" Id="{51c53bf0-f603-4526-af72-51056970282d}">
+      <Get Name="Get" Id="{cf3ecd2a-363b-4576-a777-3c9ab64e61d2}">
         <Declaration><![CDATA[
-VAR
-END_VAR
+
 ]]></Declaration>
         <Implementation>
           <ST><![CDATA[
-
+z := fz;
 ]]></ST>
         </Implementation>
       </Get>
+      <Set Name="Set" Id="{eacf604f-8514-4bc0-a73c-42cfbd5fc4e4}">
+        <Declaration><![CDATA[
+
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+fz := z;
+]]></ST>
+        </Implementation>
+      </Set>
     </Property>
   </POU>
 </TcPlcObject>

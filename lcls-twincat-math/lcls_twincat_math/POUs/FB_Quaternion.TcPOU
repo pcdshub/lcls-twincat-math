@@ -96,10 +96,10 @@ IF fScalar = 0.0 THEN
     RETURN;
 END_IF
 
-fw := w / fScalar;
-fx := x / fScalar;
-fy := y / fScalar;
-fz := z / fScalar;
+w := w / fScalar;
+x := x / fScalar;
+y := y / fScalar;
+z := z / fScalar;
 ]]></ST>
       </Implementation>
     </Method>
@@ -145,10 +145,10 @@ METHOD MakeConj
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-fw := w;
-fx := -x;
-fy := -y;
-fz := -z;
+w := w;
+x := -x;
+y := -y;
+z := -z;
 ]]></ST>
       </Implementation>
     </Method>
@@ -172,10 +172,10 @@ fxi := x;
 fyi := y;
 fzi := z;
 
-fw := (fwi * iQuaternion.w) - (fxi * iQuaternion.x) - (fyi * iQuaternion.y) - (fzi * iQuaternion.z);
-fx := (fwi * iQuaternion.x) + (fxi * iQuaternion.w) + (fyi * iQuaternion.z) - (fzi * iQuaternion.y);
-fy := (fwi * iQuaternion.y) - (fxi * iQuaternion.z) + (fyi * iQuaternion.w) + (fzi * iQuaternion.x);
-fz := (fwi * iQuaternion.z) + (fxi * iQuaternion.y) - (fyi * iQuaternion.x) + (fzi * iQuaternion.w);
+w := (fwi * iQuaternion.w) - (fxi * iQuaternion.x) - (fyi * iQuaternion.y) - (fzi * iQuaternion.z);
+x := (fwi * iQuaternion.x) + (fxi * iQuaternion.w) + (fyi * iQuaternion.z) - (fzi * iQuaternion.y);
+y := (fwi * iQuaternion.y) - (fxi * iQuaternion.z) + (fyi * iQuaternion.w) + (fzi * iQuaternion.x);
+z := (fwi * iQuaternion.z) + (fxi * iQuaternion.y) - (fyi * iQuaternion.x) + (fzi * iQuaternion.w);
 ]]></ST>
       </Implementation>
     </Method>
@@ -222,10 +222,10 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-fw := w;
-fx := i;
-fy := j;
-fz := k;
+THIS^.w := w;
+THIS^.x := i;
+THIS^.y := j;
+THIS^.z := k;
 ]]></ST>
       </Implementation>
     </Method>

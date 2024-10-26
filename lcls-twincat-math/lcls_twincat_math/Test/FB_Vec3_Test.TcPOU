@@ -1,0 +1,628 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_Vec3_Test" Id="{9d6c42c9-a1e8-4e8e-8f07-5db3cf191506}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_Vec3_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestAddVec3ExpectCorrectResult();
+
+TestCrossVec3ExpectCorrectResult();
+
+TestDivScalarBy0ExpectErrorUnchanged();
+
+TestDivScalarExpectNoErrorCorrectResult();
+
+TestEqualsVec3ExpectCorrectResult();
+
+TestGetNormExpectCorrectResult();
+
+TestGetNormSqExpectCorrectResult();
+
+TestNormalizeBy0ExpectErrorUnchanged();
+
+TestNormalizeExpectCorrectResult();
+
+TestSetExpectCorrectResult();
+
+TestToStringExpectCorrectResult();
+]]></ST>
+    </Implementation>
+    <Method Name="TestAddVec3ExpectCorrectResult" Id="{f37f7a84-3a62-4fcb-b1b9-b0f3fae40c3d}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestAddVec3ExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+    fbV2 : FB_Vec3;
+    fbV3 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestAddVec3ExpectCorrectResult');
+
+fbV1.Set(1, 2, 3);
+fbV2.Set(5, 11, 14);
+fbV3.Set(2, -1, -5);
+
+fbV1.AddVec3(fbV2);
+fbV3.AddVec3(fbV1);
+
+// V1
+AssertEquals_LREAL(
+    Expected := 6.0,
+    Actual := fbV1.x,
+    Delta := 0.0,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 13.0,
+    Actual := fbV1.y,
+    Delta := 0.0,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 17.0,
+    Actual := fbV1.z,
+    Delta := 0.0,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+// V2
+AssertEquals_LREAL(
+    Expected := 5.0,
+    Actual := fbV2.x,
+    Delta := 0.0,
+    Message := 'Vector 2 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 11.0,
+    Actual := fbV2.y,
+    Delta := 0.0,
+    Message := 'Vector 2 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 14.0,
+    Actual := fbV2.z,
+    Delta := 0.0,
+    Message := 'Vector 2 [z] was not the expected value.'
+);
+
+// V3
+AssertEquals_LREAL(
+    Expected := 8.0,
+    Actual := fbV3.x,
+    Delta := 0.0,
+    Message := 'Vector 3 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 12.0,
+    Actual := fbV3.y,
+    Delta := 0.0,
+    Message := 'Vector 3 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 12.0,
+    Actual := fbV3.z,
+    Delta := 0.0,
+    Message := 'Vector 3 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestCrossVec3ExpectCorrectResult" Id="{6bb859fa-5ec7-4fb1-8e5e-9875f803bc58}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestCrossVec3ExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+    fbV2 : FB_Vec3;
+    fbV3 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestCrossVec3ExpectCorrectResult');
+
+fbV1.Set(1, 2, 3);
+fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+fbV3.Set(2, -1, -5);
+
+fbV1.CrossVec3(fbV2);
+fbV3.CrossVec3(fbV1);
+
+// V1
+AssertEquals_LREAL(
+    Expected := 0.063391442155309,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.633914421553089,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.443740095087162,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+// V2
+AssertEquals_LREAL(
+    Expected := 0.217115689381933,
+    Actual := fbV2.x,
+    Delta := 0.0,
+    Message := 'Vector 2 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.00950871632329635,
+    Actual := fbV2.y,
+    Delta := 0.0,
+    Message := 'Vector 2 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.01743264659271,
+    Actual := fbV2.z,
+    Delta := 0.0,
+    Message := 'Vector 2 [z] was not the expected value.'
+);
+
+// V3
+AssertEquals_LREAL(
+    Expected := 3.613312202852607,
+    Actual := fbV3.x,
+    Delta := 1e-10,
+    Message := 'Vector 3 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.570522979397780,
+    Actual := fbV3.y,
+    Delta := 1e-10,
+    Message := 'Vector 3 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.331220285261487,
+    Actual := fbV3.z,
+    Delta := 1e-10,
+    Message := 'Vector 3 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestDivScalarBy0ExpectErrorUnchanged" Id="{2cf364b9-decc-44ac-96ba-4817c1c1eed0}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestDivScalarBy0ExpectErrorUnchanged
+VAR
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestDivScalarBy0ExpectErrorUnchanged');
+
+fbV1.Set(1, 2, 3);
+
+fbV1.DivScalar(
+    fScalar := 0.0,
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertTrue(
+    Condition := bError,
+    Message := 'Should have had an error on the scalar division operation.'
+);
+
+AssertFalse(
+    Condition := sErrorMsg = '',
+    Message := 'Should not have had an empty error message on the scalar division operation.'
+);
+
+// V1
+AssertEquals_LREAL(
+    Expected := 1,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 2,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 3,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestDivScalarExpectNoErrorCorrectResult" Id="{dd680edd-c837-4bb6-99a8-94f1c14ac920}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestDivScalarExpectNoErrorCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestDivScalarExpectNoErrorCorrectResult');
+
+fbV1.Set(1, 2, 3);
+
+fbV1.DivScalar(
+    fScalar := 2.0,
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertFalse(
+    Condition := bError,
+    Message := 'Should not have had an error on the scalar division operation.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg = '',
+    Message := 'Should have had an empty error message on the scalar division operation.'
+);
+
+// V1
+AssertEquals_LREAL(
+    Expected := 0.5,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.0,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.5,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestEqualsVec3ExpectCorrectResult" Id="{00598f68-6254-458d-9cf0-058f92b25d1d}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestEqualsVec3ExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+    fbV2 : FB_Vec3;
+    fbV3 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestEqualsVec3ExpectCorrectResult');
+
+fbV1.Set(1, 2, 3);
+fbV2.Set(5, 11, 14);
+fbV3.Set(1, 2, 3);
+
+AssertTrue(
+    Condition := fbV1.EqualsVec3(fbV3),
+    Message := 'V1 should register as equal to V3'
+);
+
+AssertTrue(
+    Condition := fbV3.EqualsVec3(fbV1),
+    Message := 'V3 should register as equal to V1'
+);
+
+AssertFalse(
+    Condition := fbV1.EqualsVec3(fbV2),
+    Message := 'V1 should not register as equal to V2'
+);
+
+AssertFalse(
+    Condition := fbV2.EqualsVec3(fbV1),
+    Message := 'V2 should not register as equal to V1'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestGetNormExpectCorrectResult" Id="{b5286025-7170-415d-bf34-e1b91c6a8965}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestGetNormExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+    fbV2 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestGetNormExpectCorrectResult');
+
+fbV1.Set(1, 2, 3);
+fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+
+AssertEquals_LREAL(
+    Expected := 3.741657386773941,
+    Actual := fbV1.GetNorm(),
+    Delta := 1e-10,
+    Message := 'Norm was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.218021869153384,
+    Actual := fbV2.GetNorm(),
+    Delta := 1e-10,
+    Message := 'Norm was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestGetNormSqExpectCorrectResult" Id="{d932556f-9e1f-4ff5-9be3-751fafe74350}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestGetNormSqExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+    fbV2 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestGetNormSqExpectCorrectResult');
+
+fbV1.Set(1, 2, 3);
+fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+
+AssertEquals_LREAL(
+    Expected := 14.0,
+    Actual := fbV1.GetNormSq(),
+    Delta := 1e-10,
+    Message := 'Norm squared was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.047533535429135,
+    Actual := fbV2.GetNormSq(),
+    Delta := 1e-10,
+    Message := 'Norm squared was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestNormalizeBy0ExpectErrorUnchanged" Id="{f2a3c9ce-7fd8-40e9-8fd0-58046f4cf118}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestNormalizeBy0ExpectErrorUnchanged
+VAR
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestNormalizeBy0ExpectErrorUnchanged');
+
+fbV1.Set(0, 0, 0);
+fbV1.Normalize(
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertTrue(
+    Condition := bError,
+    Message := 'Should have had an error on normalize.'
+);
+
+AssertFalse(
+    Condition := sErrorMsg = '',
+    Message := 'Should not have empty error message on normalize.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbV1.x,
+    Delta := 0.0,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbV1.y,
+    Delta := 0.0,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbV1.z,
+    Delta := 0.0,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestNormalizeExpectCorrectResult" Id="{9a76be6d-29d8-42ef-8e19-23cb51c15e66}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestNormalizeExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestNormalizeExpectCorrectResult');
+
+fbV1.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+fbV1.Normalize(
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertFalse(
+    Condition := bError,
+    Message := 'Should not have had an error on normalize.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg = '',
+    Message := 'Should have empty error message on normalize.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.995843629013136,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.043613589591816,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.079958247584997,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestSetExpectCorrectResult" Id="{58a0890f-c23a-4bee-af97-4ae770fbd77a}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestSetExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+    fbV2 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestSetExpectCorrectResult');
+
+fbV1.Set(1, 2, 3);
+
+AssertFalse(
+    Condition := fbV1.EqualsVec3(fbV2),
+    Message := 'V1 should not register as equal to V2'
+);
+
+fbV1.Set(0, 0, 0);
+
+AssertTrue(
+    Condition := fbV1.EqualsVec3(fbV2),
+    Message := 'V1 should register as equal to V2 after set operation.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestToStringExpectCorrectResult" Id="{772d8f48-7b8b-4e87-84cf-35ca9fccbeb6}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestToStringExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+    sExpected : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestToStringExpectCorrectResult');
+
+fbV1.Set(1, 2, 3);
+sExpected := '(1.0, 2.0, 3.0)';
+
+AssertTrue(
+    Condition := fbV1.ToString() = sExpected,
+    Message := CONCAT('Expected string to be: [',
+               CONCAT(sExpected,
+               CONCAT('] but string was: [',
+               CONCAT(fbV1.ToString(),
+               ']'))))
+);
+
+fbV1.Set(-1, -2, -3);
+sExpected := '(-1.0, -2.0, -3.0)';
+
+AssertTrue(
+    Condition := fbV1.ToString() = sExpected,
+    Message := CONCAT('Expected string to be: [',
+               CONCAT(sExpected,
+               CONCAT('] but string was: [',
+               CONCAT(fbV1.ToString(),
+               ']'))))
+);
+
+fbV1.Set(0, 0, 0);
+sExpected := '(0.0, 0.0, 0.0)';
+
+AssertTrue(
+    Condition := fbV1.ToString() = sExpected,
+    Message := CONCAT('Expected string to be: [',
+               CONCAT(sExpected,
+               CONCAT('] but string was: [',
+               CONCAT(fbV1.ToString(),
+               ']'))))
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

@@ -5,6 +5,7 @@
 PROGRAM PRG_Test
 VAR
     fbQuaternionTest : FB_Quaternion_Test;
+    fbVec3Test : FB_Vec3_Test;
 END_VAR
 ]]></Declaration>
     <Implementation>
