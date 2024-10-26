@@ -16,7 +16,7 @@ VAR
     fbNormVec3Test : FB_NormVec3_Test;
     fbNormVec4Test : FB_NormVec4_Test;
     fbQuaternionTest : FB_Quaternion_Test;
-    fbRotateVec3 : FB_RotateVec3_Test;
+    fbRotateVec3 : FB_QuatRotateVec3_Test;
     fbVec3Test : FB_Vec3_Test;
 END_VAR
 ]]></Declaration>

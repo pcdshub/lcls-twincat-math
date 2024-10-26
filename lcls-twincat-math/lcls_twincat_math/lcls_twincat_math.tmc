@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<TcModuleClass xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance2" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2009/05/TcModuleClass" Hash="{AD0E25FF-497E-ADAB-2162-7A5FF7476DC2}" GeneratedBy="TwinCAT XAE Plc">
+<TcModuleClass xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance2" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2009/05/TcModuleClass" Hash="{9AC83A85-D6AE-B414-AB80-A8C5576917B6}" GeneratedBy="TwinCAT XAE Plc">
   <DataTypes>
     <DataType>
       <Name GUID="{6F5942ED-BFA1-497D-8225-23C6DAAD0A09}" TcBaseType="true">ST_LibVersion</Name>
@@ -10729,6 +10729,63 @@
       </Properties>
     </DataType>
     <DataType>
+      <Name>FB_QuatRotateVec3_Test</Name>
+      <BitSize>33561984</BitSize>
+      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
+      <Method>
+        <Name>TestRandInputExpectCorrectResult</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>bError</Name>
+          <Type>BOOL</Type>
+          <BitSize>8</BitSize>
+        </Local>
+        <Local>
+          <Name>sErrorMsg</Name>
+          <Type Namespace="Tc2_System">T_MaxString</Type>
+          <BitSize>2048</BitSize>
+        </Local>
+      </Method>
+      <Method>
+        <Name>Test0QuatExpectErrorUnchanged</Name>
+        <Local>
+          <Name>fbQ1</Name>
+          <Type>FB_Quaternion</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>fbV1</Name>
+          <Type>FB_Vec3</Type>
+          <BitSize>384</BitSize>
+        </Local>
+        <Local>
+          <Name>bError</Name>
+          <Type>BOOL</Type>
+          <BitSize>8</BitSize>
+        </Local>
+        <Local>
+          <Name>sErrorMsg</Name>
+          <Type Namespace="Tc2_System">T_MaxString</Type>
+          <BitSize>2048</BitSize>
+        </Local>
+      </Method>
+      <Properties>
+        <Property>
+          <Name>PouType</Name>
+          <Value>FunctionBlock</Value>
+        </Property>
+      </Properties>
+    </DataType>
+    <DataType>
       <Name>FB_Vec3_Test</Name>
       <BitSize>33561984</BitSize>
       <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
@@ -11397,30 +11454,6 @@
         </Property>
         <Property>
           <Name>hide</Name>
-        </Property>
-      </Properties>
-    </DataType>
-    <DataType>
-      <Name>FB_RotateVec3_Test</Name>
-      <BitSize>33561984</BitSize>
-      <ExtendsType Namespace="TcUnit">FB_TestSuite</ExtendsType>
-      <Method>
-        <Name>TestRandInputExpectCorrectResult</Name>
-        <Local>
-          <Name>fbQ1</Name>
-          <Type>FB_Quaternion</Type>
-          <BitSize>384</BitSize>
-        </Local>
-        <Local>
-          <Name>fbV1</Name>
-          <Type>FB_Vec3</Type>
-          <BitSize>384</BitSize>
-        </Local>
-      </Method>
-      <Properties>
-        <Property>
-          <Name>PouType</Name>
-          <Value>FunctionBlock</Value>
         </Property>
       </Properties>
     </DataType>
@@ -14099,13 +14132,13 @@
         <BitSize>33561984</BitSize>
       </SubItem>
       <SubItem>
-        <Name Static="true">fbVec3Test</Name>
-        <Type>FB_Vec3_Test</Type>
+        <Name Static="true">fbRotateVec3</Name>
+        <Type>FB_QuatRotateVec3_Test</Type>
         <BitSize>33561984</BitSize>
       </SubItem>
       <SubItem>
-        <Name Static="true">fbRotateVec3</Name>
-        <Type>FB_RotateVec3_Test</Type>
+        <Name Static="true">fbVec3Test</Name>
+        <Type>FB_Vec3_Test</Type>
         <BitSize>33561984</BitSize>
       </SubItem>
     </DataType>
@@ -14185,7 +14218,7 @@
           <AreaNo AreaType="Internal" CreateSymbols="true">3</AreaNo>
           <Name>PlcTask Internal</Name>
           <ContextId>0</ContextId>
-          <ByteSize>161087488</ByteSize>
+          <ByteSize>166133760</ByteSize>
           <Symbol>
             <Name>Global_Version.stLibVersion_Tc2_Standard</Name>
             <BitSize>288</BitSize>
@@ -18396,79 +18429,85 @@
             <Name>PRG_Test.fbAxisAngleQuatTest</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_AxisAngleQuat_Test</BaseType>
-            <BitOffs>633625920</BitOffs>
+            <BitOffs>633630336</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbCrossTest</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_Cross_Test</BaseType>
-            <BitOffs>667187904</BitOffs>
+            <BitOffs>667192320</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbDotTest</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_Dot_Test</BaseType>
-            <BitOffs>700749888</BitOffs>
+            <BitOffs>700754304</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbEulerToQuatTest</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_EulerToQuat_Test</BaseType>
-            <BitOffs>734311872</BitOffs>
+            <BitOffs>734316288</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbMulQuatTest</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_MulQuat_Test</BaseType>
-            <BitOffs>767873856</BitOffs>
+            <BitOffs>767878272</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbNormalizedQuatTest</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_NormalizedQuat_Test</BaseType>
-            <BitOffs>801435840</BitOffs>
+            <BitOffs>801440256</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbNormalizedVec3Test</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_NormalizedVec3_Test</BaseType>
-            <BitOffs>834997824</BitOffs>
+            <BitOffs>835002240</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbNormSqVec3Test</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_NormSqVec3_Test</BaseType>
-            <BitOffs>868559808</BitOffs>
+            <BitOffs>868564224</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbNormSqVec4Test</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_NormSqVec4_Test</BaseType>
-            <BitOffs>902121792</BitOffs>
+            <BitOffs>902126208</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbNormVec3Test</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_NormVec3_Test</BaseType>
-            <BitOffs>935683776</BitOffs>
+            <BitOffs>935688192</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbNormVec4Test</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_NormVec4_Test</BaseType>
-            <BitOffs>969245760</BitOffs>
+            <BitOffs>969250176</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbQuaternionTest</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_Quaternion_Test</BaseType>
-            <BitOffs>1002807744</BitOffs>
+            <BitOffs>1002812160</BitOffs>
+          </Symbol>
+          <Symbol>
+            <Name>PRG_Test.fbRotateVec3</Name>
+            <BitSize>33561984</BitSize>
+            <BaseType>FB_QuatRotateVec3_Test</BaseType>
+            <BitOffs>1036374144</BitOffs>
           </Symbol>
           <Symbol>
             <Name>PRG_Test.fbVec3Test</Name>
             <BitSize>33561984</BitSize>
             <BaseType>FB_Vec3_Test</BaseType>
-            <BitOffs>1036369728</BitOffs>
+            <BitOffs>1069936128</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_PreventOnlineChangeGvl.PlcProfilerConfigChecksum</Name>
@@ -18482,7 +18521,7 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>1069931712</BitOffs>
+            <BitOffs>1103498112</BitOffs>
           </Symbol>
           <Symbol>
             <Name>GVL_Constants.PI</Name>
@@ -18496,7 +18535,7 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>1069932288</BitOffs>
+            <BitOffs>1103498688</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_SystemInfoVarList._AppInfo</Name>
@@ -18510,7 +18549,7 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>1069932608</BitOffs>
+            <BitOffs>1103499008</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_SystemInfoVarList._TaskInfo</Name>
@@ -18528,7 +18567,7 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>1069934656</BitOffs>
+            <BitOffs>1103501056</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_SystemInfoVarList._TaskPouOid_PlcTask</Name>
@@ -18542,7 +18581,7 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>1069935680</BitOffs>
+            <BitOffs>1103502080</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_SystemInfoVarList._TaskOid_PlcTask</Name>
@@ -18556,7 +18595,7 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>1069935712</BitOffs>
+            <BitOffs>1103502112</BitOffs>
           </Symbol>
           <Symbol>
             <Name>TwinCAT_SystemInfoVarList.__PlcTask</Name>
@@ -18577,13 +18616,7 @@
                 <Name>TcVarGlobal</Name>
               </Property>
             </Properties>
-            <BitOffs>1069935744</BitOffs>
-          </Symbol>
-          <Symbol>
-            <Name>PRG_Test.fbRotateVec3</Name>
-            <BitSize>33561984</BitSize>
-            <BaseType>FB_RotateVec3_Test</BaseType>
-            <BitOffs>1070299008</BitOffs>
+            <BitOffs>1103502144</BitOffs>
           </Symbol>
         </DataArea>
       </DataAreas>
@@ -18596,7 +18629,7 @@
         </Property>
         <Property>
           <Name>ChangeDate</Name>
-          <Value>2024-10-26T14:29:33</Value>
+          <Value>2024-10-26T16:56:17</Value>
         </Property>
         <Property>
           <Name>GeneratedCodeSize</Name>

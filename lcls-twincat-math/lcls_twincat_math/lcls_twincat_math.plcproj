@@ -70,10 +70,10 @@
     <Compile Include="POUs\F_NormVec4.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\F_RotateVec3.TcPOU">
+    <Compile Include="POUs\F_QuatRotateVec3.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\F_RotateVec3_1.TcPOU">
+    <Compile Include="POUs\F_EulerRotateVec3.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Test\FB_EulerToQuat_Test.TcPOU">
@@ -91,7 +91,7 @@
     <Compile Include="Test\FB_AxisAngleQuat_Test.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Test\FB_RotateVec3_Test.TcPOU">
+    <Compile Include="Test\FB_QuatRotateVec3_Test.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Test\FB_NormSqVec3_Test.TcPOU">

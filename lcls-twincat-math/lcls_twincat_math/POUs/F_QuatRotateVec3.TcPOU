@@ -1,11 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <TcPlcObject Version="1.1.0.1">
-  <POU Name="F_RotateVec3" Id="{a341ae59-fa7c-49ee-bd4f-c65f29acf2d6}" SpecialFunc="None">
+  <POU Name="F_QuatRotateVec3" Id="{a341ae59-fa7c-49ee-bd4f-c65f29acf2d6}" SpecialFunc="None">
     <Declaration><![CDATA[
-FUNCTION F_RotateVec3 : FB_Vec3
+FUNCTION F_QuatRotateVec3 : FB_Vec3
 VAR_INPUT
     iQuat : I_Vec4;
     iVec3 : I_Vec3;
+END_VAR
+VAR_OUTPUT
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
 END_VAR
 VAR
     fbQ : FB_Quaternion;
@@ -16,7 +20,18 @@ END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
+bError := FALSE;
+sErrorMsg := '';
+
 fbQ.Set(iQuat.w, iQuat.x, iQuat.y, iQuat.z);
+
+IF fbQ.GetNorm() = 0.0 THEN
+    bError := TRUE;
+    sErrorMsg := 'Error: cannot rotate a vector using a quaternion with a norm of 0.';
+    F_QuatRotateVec3.Set(iVec3.x, iVec3.y, iVec3.z);
+    RETURN;
+END_IF
+
 fbQ.Normalize();
 
 fbV.Set(iVec3.x, iVec3.y, iVec3.z);
@@ -27,9 +42,9 @@ fbQc.MakeConj();
 fbQv := F_MulQuat(fbV, fbQ);
 fbQv := F_MulQuat(fbQc, fbQv);
 
-F_RotateVec3.x := fbQv.x;
-F_RotateVec3.y := fbQv.y;
-F_RotateVec3.z := fbQv.z;
+F_QuatRotateVec3.x := fbQv.x;
+F_QuatRotateVec3.y := fbQv.y;
+F_QuatRotateVec3.z := fbQv.z;
 ]]></ST>
     </Implementation>
   </POU>

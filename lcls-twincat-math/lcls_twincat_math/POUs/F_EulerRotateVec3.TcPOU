@@ -1,10 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <TcPlcObject Version="1.1.0.1">
-  <POU Name="F_RotateVec3_1" Id="{9201381c-22ca-4f17-b240-af852ad7524e}" SpecialFunc="None">
+  <POU Name="F_EulerRotateVec3" Id="{9201381c-22ca-4f17-b240-af852ad7524e}" SpecialFunc="None">
     <Declaration><![CDATA[
-FUNCTION F_RotateVec3_1 : FB_Vec3
+FUNCTION F_EulerRotateVec3 : FB_Vec3
 VAR_INPUT
-    iVec4 : I_Vec4;
     iVec3 : I_Vec3;
     fAlphaRadians : LREAL; // Euler angle around first rotation axis
     fBetaRadians : LREAL; // Euler angle around second rotation axis
@@ -13,15 +12,12 @@ VAR_INPUT
     // YZY, YXY, ZYZ, ZXZ, XYX, XZX, XYZ, YZX, ZXY, XZY, ZYX, YXZ
 END_VAR
 VAR
-    fbV3 : FB_Vec3;
-    fbQr : FB_Quaternion;
-    fbQc : FB_Quaternion;
-    fbQo : FB_Quaternion;
+    fbQ : FB_Quaternion;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
-fbQr := F_EulerToQuat(
+fbQ := F_EulerToQuat(
     fAlphaRadians := fAlphaRadians,
     fBetaRadians := fBetaRadians,
     fGammaRadians := fGammaRadians,
@@ -29,17 +25,10 @@ fbQr := F_EulerToQuat(
     bFrame := FALSE
 );
 
-fbV3.Set(iVec3.x, iVec3.y, iVec3.z);
-
-fbQc := fbQr;
-fbQc.MakeConj();
-
-fbQo := F_MulQuat(fbQr, fbV3);
-fbQo := F_MulQuat(fbQo, fbQc);
-
-//F_RotateVec3.x := fbQo.x;
-//F_RotateVec3.y := fbQo.y;
-//F_RotateVec3.z := fbQo.z;
+F_EulerRotateVec3 := F_QuatRotateVec3(
+    iQuat := fbQ,
+    iVec3 := iVec3
+);
 ]]></ST>
     </Implementation>
   </POU>
