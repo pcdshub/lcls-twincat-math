@@ -16,6 +16,10 @@
     <Implicit_KindOfTask>{a06b58cf-fdd2-422e-8251-374e5fa3eb30}</Implicit_KindOfTask>
     <Implicit_Jitter_Distribution>{51c5c0e3-4889-4b90-bf2e-0fabde86fae4}</Implicit_Jitter_Distribution>
     <LibraryReferences>{45bec6fe-f828-43db-9c37-eda2d667561c}</LibraryReferences>
+    <Company>SLAC - LCLS</Company>
+    <Released>false</Released>
+    <Title>lcls-twincat-math</Title>
+    <ProjectVersion>0.0.0</ProjectVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="GVLs\GVL_Constants.TcGVL">
