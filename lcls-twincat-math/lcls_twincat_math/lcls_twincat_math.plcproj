@@ -22,7 +22,7 @@
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
     </Compile>
-    <Compile Include="ITFs\I_Vec4.TcIO">
+    <Compile Include="ITFs\I_Quat.TcIO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ITFs\I_Vec3.TcIO">
@@ -43,6 +43,9 @@
     <Compile Include="POUs\F_Cross.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\F_EulerRotateVec3Point.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\F_EulerToQuat.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -55,7 +58,7 @@
     <Compile Include="POUs\F_NormalizedQuat.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\F_NormSqVec4.TcPOU">
+    <Compile Include="POUs\F_NormSqQuat.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\F_NormSqVec3.TcPOU">
@@ -67,13 +70,19 @@
     <Compile Include="POUs\F_AxisAngleQuat.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\F_NormVec4.TcPOU">
+    <Compile Include="POUs\F_NormQuat.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\F_QuatRotateVec3.TcPOU">
+    <Compile Include="POUs\F_QuatRotateVec3Frame.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\F_EulerRotateVec3.TcPOU">
+    <Compile Include="POUs\F_EulerRotateVec3Frame.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\F_QuatRotateVec3Point.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Test\FB_EulerRotateVec3Point_Test.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Test\FB_EulerToQuat_Test.TcPOU">
@@ -91,7 +100,7 @@
     <Compile Include="Test\FB_AxisAngleQuat_Test.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Test\FB_QuatRotateVec3_Test.TcPOU">
+    <Compile Include="Test\FB_QuatRotateVec3Frame_Test.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Test\FB_NormSqVec3_Test.TcPOU">
@@ -100,19 +109,25 @@
     <Compile Include="Test\FB_NormVec3_Test.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Test\FB_NormSqVec4_Test.TcPOU">
+    <Compile Include="Test\FB_NormSqQuat_Test.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Test\FB_NormalizedVec3_Test.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Test\FB_NormVec4_Test.TcPOU">
+    <Compile Include="Test\FB_NormQuat_Test.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Test\FB_Quaternion_Test.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Test\FB_Cross_Test.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Test\FB_EulerRotateVec3Frame_Test.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Test\FB_QuatRotateVec3Point_Test.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Test\FB_Vec3_Test.TcPOU">

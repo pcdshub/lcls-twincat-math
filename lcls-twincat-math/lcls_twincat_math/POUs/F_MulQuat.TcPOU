@@ -4,8 +4,8 @@
     <Declaration><![CDATA[
 FUNCTION F_MulQuat : FB_Quaternion
 VAR_INPUT
-    iQuatL	: I_Vec4;
-    iQuatR	: I_Vec4;
+    iQuatL	: I_Quat;
+    iQuatR	: I_Quat;
 END_VAR
 ]]></Declaration>
     <Implementation>

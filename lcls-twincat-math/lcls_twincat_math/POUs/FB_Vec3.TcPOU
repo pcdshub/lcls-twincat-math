@@ -2,7 +2,7 @@
 <TcPlcObject Version="1.1.0.1">
   <POU Name="FB_Vec3" Id="{c09dfe87-9fa9-4800-966a-c9fa2f01d9b6}" SpecialFunc="None">
     <Declaration><![CDATA[
-FUNCTION_BLOCK FB_Vec3 IMPLEMENTS I_Vec3, I_Vec4
+FUNCTION_BLOCK FB_Vec3 IMPLEMENTS I_Vec3, I_Quat
 VAR
     fx : LREAL;
     fy : LREAL;
@@ -18,7 +18,7 @@ END_VAR
       <Declaration><![CDATA[
 METHOD AddVec3
 VAR_INPUT
-    iVec3	: I_Vec4;
+    iVec3	: I_Vec3;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -85,7 +85,7 @@ z := z / fScalar;
       <Declaration><![CDATA[
 METHOD DotVec3 : LREAL
 VAR_INPUT
-    iVec3	: I_Vec4;
+    iVec3	: I_Vec3;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -98,7 +98,7 @@ DotVec3 := (x * iVec3.x) + (y * iVec3.y) + (z * iVec3.z);
       <Declaration><![CDATA[
 METHOD EqualsVec3 : BOOL
 VAR_INPUT
-    iVec3 : I_Vec4;
+    iVec3 : I_Vec3;
 END_VAR
 ]]></Declaration>
       <Implementation>

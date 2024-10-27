@@ -7,16 +7,19 @@ VAR
     fbAxisAngleQuatTest : FB_AxisAngleQuat_Test;
     fbCrossTest : FB_Cross_Test;
     fbDotTest : FB_Dot_Test;
+    fbEulerRotateVec3FrameTest : FB_EulerRotateVec3Frame_Test;
+    fbEulerRotateVec3PointTest : FB_EulerRotateVec3Point_Test;
     fbEulerToQuatTest : FB_EulerToQuat_Test;
     fbMulQuatTest : FB_MulQuat_Test;
     fbNormalizedQuatTest : FB_NormalizedQuat_Test;
     fbNormalizedVec3Test : FB_NormalizedVec3_Test;
+    fbNormQuatTest : FB_NormQuat_Test;
+    fbNormSqQuatTest : FB_NormSqQuat_Test;
     fbNormSqVec3Test : FB_NormSqVec3_Test;
-    fbNormSqVec4Test : FB_NormSqVec4_Test;
     fbNormVec3Test : FB_NormVec3_Test;
-    fbNormVec4Test : FB_NormVec4_Test;
     fbQuaternionTest : FB_Quaternion_Test;
-    fbRotateVec3 : FB_QuatRotateVec3_Test;
+    fbQuatRotateVec3FrameTest : FB_QuatRotateVec3Frame_Test;
+    fbQuatRotateVec3PointTest : FB_QuatRotateVec3Point_Test;
     fbVec3Test : FB_Vec3_Test;
 END_VAR
 ]]></Declaration>

@@ -163,7 +163,7 @@ fbQ1.Set(1, 2, 3, 4);
 fbQ2.Set(0, 0, 0, 0);
 
 fbQ1.DivQuat(
-    iQuaternion := fbQ2,
+    iQuat := fbQ2,
     bError => bError,
     sErrorMsg => sErrorMsg
 );
@@ -263,13 +263,13 @@ fbQ2.Set(5, 11, 14, 17);
 fbQ3.Set(2, -1, -5, 2);
 
 fbQ1.DivQuat(
-    iQuaternion := fbQ2,
+    iQuat := fbQ2,
     bError => bError1,
     sErrorMsg => sErrorMsg1
 );
 
 fbQ3.DivQuat(
-    iQuaternion := fbQ1,
+    iQuat := fbQ1,
     bError => bError2,
     sErrorMsg => sErrorMsg2
 );

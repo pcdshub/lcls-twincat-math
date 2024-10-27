@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_EulerRotateVec3Frame" Id="{9201381c-22ca-4f17-b240-af852ad7524e}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_EulerRotateVec3Frame : FB_Vec3
+VAR_INPUT
+    iVec3 : I_Vec3;
+    fAlphaRadians : LREAL; // Euler angle around first rotation axis
+    fBetaRadians : LREAL; // Euler angle around second rotation axis
+    fGammaRadians : LREAL; // Euler angle around third rotation axis
+    sOrder : STRING := 'ZYX'; // Default or invalid input = ZYX.
+    // YZY, YXY, ZYZ, ZXZ, XYX, XZX, XYZ, YZX, ZXY, XZY, ZYX, YXZ
+END_VAR
+VAR
+    fbQ : FB_Quaternion;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+fbQ := F_EulerToQuat(
+    fAlphaRadians := fAlphaRadians,
+    fBetaRadians := fBetaRadians,
+    fGammaRadians := fGammaRadians,
+    sOrder := sOrder,
+    bFrame := TRUE
+);
+
+F_EulerRotateVec3Frame := F_QuatRotateVec3Frame(
+    iQuat := fbQ,
+    iVec3 := iVec3
+);
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

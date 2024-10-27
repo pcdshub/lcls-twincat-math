@@ -2,7 +2,7 @@
 <TcPlcObject Version="1.1.0.1">
   <POU Name="FB_Quaternion" Id="{368e3e81-21d8-4842-8003-27045a72af0c}" SpecialFunc="None">
     <Declaration><![CDATA[
-FUNCTION_BLOCK FB_Quaternion IMPLEMENTS I_Vec4
+FUNCTION_BLOCK FB_Quaternion IMPLEMENTS I_Quat
 VAR
     fw : LREAL;
     fx : LREAL;
@@ -19,15 +19,15 @@ END_VAR
       <Declaration><![CDATA[
 METHOD AddQuat
 VAR_INPUT
-    iQuaternion	: I_Vec4;
+    iQuat	: I_Quat;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-w := w + iQuaternion.w;
-x := x + iQuaternion.x;
-y := y + iQuaternion.y;
-z := z + iQuaternion.z;
+w := w + iQuat.w;
+x := x + iQuat.x;
+y := y + iQuat.y;
+z := z + iQuat.z;
 ]]></ST>
       </Implementation>
     </Method>
@@ -35,7 +35,7 @@ z := z + iQuaternion.z;
       <Declaration><![CDATA[
 METHOD DivQuat
 VAR_INPUT
-    iQuaternion	: I_Vec4;
+    iQuat	: I_Quat;
 END_VAR
 VAR_OUTPUT
     bError : BOOL;
@@ -54,7 +54,7 @@ END_VAR
 bError := FALSE;
 sErrorMsg := '';
 
-fNormSq := F_NormSqVec4(iQuaternion);
+fNormSq := F_NormSqQuat(iQuat);
 
 IF fNormSq = 0.0 THEN
     bError := TRUE;
@@ -67,10 +67,10 @@ fxi := x;
 fyi := y;
 fzi := z;
 
-w := ((iQuaternion.w * fwi) + (iQuaternion.x * fxi) + (iQuaternion.y * fyi) + (iQuaternion.z * fzi)) / fNormSq;
-x := ((iQuaternion.w * fxi) - (iQuaternion.x * fwi) - (iQuaternion.y * fzi) + (iQuaternion.z * fyi)) / fNormSq;
-y := ((iQuaternion.w * fyi) + (iQuaternion.x * fzi) - (iQuaternion.y * fwi) - (iQuaternion.z * fxi)) / fNormSq;
-z := ((iQuaternion.w * fzi) - (iQuaternion.x * fyi) + (iQuaternion.y * fxi) - (iQuaternion.z * fwi)) / fNormSq;
+w := ((iQuat.w * fwi) + (iQuat.x * fxi) + (iQuat.y * fyi) + (iQuat.z * fzi)) / fNormSq;
+x := ((iQuat.w * fxi) - (iQuat.x * fwi) - (iQuat.y * fzi) + (iQuat.z * fyi)) / fNormSq;
+y := ((iQuat.w * fyi) + (iQuat.x * fzi) - (iQuat.y * fwi) - (iQuat.z * fxi)) / fNormSq;
+z := ((iQuat.w * fzi) - (iQuat.x * fyi) + (iQuat.y * fxi) - (iQuat.z * fwi)) / fNormSq;
 ]]></ST>
       </Implementation>
     </Method>
@@ -107,15 +107,15 @@ z := z / fScalar;
       <Declaration><![CDATA[
 METHOD EqualsQuat : BOOL
 VAR_INPUT
-    iQuaternion	: I_Vec4;
+    iQuat	: I_Quat;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-EqualsQuat := w = iQuaternion.w AND
-              x = iQuaternion.x AND
-              y = iQuaternion.y AND
-              z = iQuaternion.z;
+EqualsQuat := w = iQuat.w AND
+              x = iQuat.x AND
+              y = iQuat.y AND
+              z = iQuat.z;
 ]]></ST>
       </Implementation>
     </Method>
@@ -156,7 +156,7 @@ z := -z;
       <Declaration><![CDATA[
 METHOD MulQuat
 VAR_INPUT
-    iQuaternion	: I_Vec4;
+    iQuat	: I_Quat;
 END_VAR
 VAR
     fwi : LREAL;
@@ -172,10 +172,10 @@ fxi := x;
 fyi := y;
 fzi := z;
 
-w := (fwi * iQuaternion.w) - (fxi * iQuaternion.x) - (fyi * iQuaternion.y) - (fzi * iQuaternion.z);
-x := (fwi * iQuaternion.x) + (fxi * iQuaternion.w) + (fyi * iQuaternion.z) - (fzi * iQuaternion.y);
-y := (fwi * iQuaternion.y) - (fxi * iQuaternion.z) + (fyi * iQuaternion.w) + (fzi * iQuaternion.x);
-z := (fwi * iQuaternion.z) + (fxi * iQuaternion.y) - (fyi * iQuaternion.x) + (fzi * iQuaternion.w);
+w := (fwi * iQuat.w) - (fxi * iQuat.x) - (fyi * iQuat.y) - (fzi * iQuat.z);
+x := (fwi * iQuat.x) + (fxi * iQuat.w) + (fyi * iQuat.z) - (fzi * iQuat.y);
+y := (fwi * iQuat.y) - (fxi * iQuat.z) + (fyi * iQuat.w) + (fzi * iQuat.x);
+z := (fwi * iQuat.z) + (fxi * iQuat.y) - (fyi * iQuat.x) + (fzi * iQuat.w);
 ]]></ST>
       </Implementation>
     </Method>

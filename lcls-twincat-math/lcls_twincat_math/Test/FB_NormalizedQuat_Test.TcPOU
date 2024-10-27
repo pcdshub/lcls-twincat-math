@@ -27,7 +27,7 @@ TEST('TestInputVec4ExpectCorrectResult');
 
 fbQ1.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
 fbQ1 := F_NormalizedQuat(
-    iVec4 := fbQ1,
+    iQuat := fbQ1,
     bError => bError,
     sErrorMsg => sErrorMsg
 );
@@ -90,7 +90,7 @@ TEST('TestNormalizeBy0ExpectErrorUnchanged');
 
 fbQ1.Set(0, 0, 0, 0);
 fbQ1 := F_NormalizedQuat(
-    iVec4 := fbQ1,
+    iQuat := fbQ1,
     bError => bError,
     sErrorMsg => sErrorMsg
 );

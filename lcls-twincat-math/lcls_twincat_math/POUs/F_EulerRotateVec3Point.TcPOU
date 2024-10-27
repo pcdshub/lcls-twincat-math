@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <TcPlcObject Version="1.1.0.1">
-  <POU Name="F_EulerRotateVec3" Id="{9201381c-22ca-4f17-b240-af852ad7524e}" SpecialFunc="None">
+  <POU Name="F_EulerRotateVec3Point" Id="{28f5dd34-ef3c-4932-88bd-cd203cc294fa}" SpecialFunc="None">
     <Declaration><![CDATA[
-FUNCTION F_EulerRotateVec3 : FB_Vec3
+FUNCTION F_EulerRotateVec3Point : FB_Vec3
 VAR_INPUT
     iVec3 : I_Vec3;
     fAlphaRadians : LREAL; // Euler angle around first rotation axis
@@ -25,7 +25,7 @@ fbQ := F_EulerToQuat(
     bFrame := FALSE
 );
 
-F_EulerRotateVec3 := F_QuatRotateVec3(
+F_EulerRotateVec3Point := F_QuatRotateVec3Point(
     iQuat := fbQ,
     iVec3 := iVec3
 );
