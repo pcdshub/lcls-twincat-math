@@ -71,6 +71,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.939829470344921,
     fGammaRadians := 0.645551874972524,
     sOrder := 'XYX',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(
@@ -172,6 +173,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.543885933999639,
     fGammaRadians := 0.721046620579811,
     sOrder := 'XYZ',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(
@@ -273,6 +275,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.639316961040108,
     fGammaRadians := 0.544716110526763,
     sOrder := 'XZX',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(
@@ -374,6 +377,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.448372912066495,
     fGammaRadians := 0.365816176838171,
     sOrder := 'XZY',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(
@@ -475,6 +479,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.832916819075216,
     fGammaRadians := 0.256440992229147,
     sOrder := 'YXY',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(
@@ -576,6 +581,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.972740854003014,
     fGammaRadians := 0.192028349427775,
     sOrder := 'YXZ',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(
@@ -677,6 +683,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.993704624120852,
     fGammaRadians := 0.218676632399634,
     sOrder := 'YZX',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(
@@ -778,6 +785,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.662009598359135,
     fGammaRadians := 0.416158589969796,
     sOrder := 'YZY',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(
@@ -879,6 +887,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.109697464523194,
     fGammaRadians := 0.063591370975106,
     sOrder := 'ZXY',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(
@@ -980,6 +989,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.264779026475630,
     fGammaRadians := 0.318074075481059,
     sOrder := 'ZXZ',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(
@@ -1081,6 +1091,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.627896379614169,
     fGammaRadians := 0.771980385554245,
     sOrder := 'ZYX',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(
@@ -1182,6 +1193,7 @@ fbQ1 := F_EulerToQuat(
     fBetaRadians := 0.582249164527227,
     fGammaRadians := 0.540739337124410,
     sOrder := 'ZYZ',
+    bFrame := TRUE
 );
 
 AssertEquals_LREAL(

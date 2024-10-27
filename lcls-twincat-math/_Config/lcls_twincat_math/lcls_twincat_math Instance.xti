@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4026.11" ClassName="CTComPlcObjDef">
-	<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" XtvPath="lcls_twincat_math\lcls_twincat_math Instance.xtv" TmcPath="lcls_twincat_math\lcls_twincat_math.tmc">
+<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.35" ClassName="CTComPlcObjDef">
+	<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="lcls_twincat_math\lcls_twincat_math.tmc" TmcHash="{A9C1E6B9-48D2-57E3-1082-8E2CFB9CFECE}">
 		<Name>__FILENAME__</Name>
 		<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 		<Contexts>
 			<Context>
-				<Id>0</Id>
+				<Id NeedCalleeCall="true">0</Id>
 				<Name>PlcTask</Name>
 				<ManualConfig>
 					<OTCID>#x02010030</OTCID>
