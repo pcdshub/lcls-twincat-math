@@ -1,6 +1,6 @@
 # lcls-twincat-math
 
-This basic math functions and operations that come with TwinCAT and IEC 61131-3 are limited in scope and complexity.
+The basic math functions and operations that come with TwinCAT and IEC 61131-3 are limited in scope and complexity.
 This repository contains useful mathematical functions for use in TwinCAT projects.
 For examples of function block and function syntax, look in the Test folder.
 
