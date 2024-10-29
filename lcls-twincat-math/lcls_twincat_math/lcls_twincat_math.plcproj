@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version='1.0' encoding='UTF-8'?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <FileVersion>1.0.0.0</FileVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -17,16 +17,18 @@
     <Implicit_Jitter_Distribution>{51c5c0e3-4889-4b90-bf2e-0fabde86fae4}</Implicit_Jitter_Distribution>
     <LibraryReferences>{45bec6fe-f828-43db-9c37-eda2d667561c}</LibraryReferences>
     <Company>SLAC - LCLS</Company>
-    <Released>false</Released>
+    <Released>true</Released>
     <Title>lcls-twincat-math</Title>
-    <ProjectVersion>0.0.0</ProjectVersion>
+    <ProjectVersion>1.0.0</ProjectVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="GVLs\GVL_Constants.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
     </Compile>
-    <Compile Include="ITFs\I_Quat.TcIO">
+    <Compile Include="Version\Global_Version.TcGVL">
+            <SubType>Code</SubType>
+        </Compile><Compile Include="ITFs\I_Quat.TcIO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ITFs\I_Vec3.TcIO">
@@ -142,11 +144,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DUTs" />
-    <Folder Include="GVLs" />
-    <Folder Include="ITFs" />
-    <Folder Include="Test" />
-    <Folder Include="POUs" />
+    <Folder Include="DUTs"/>
+    <Folder Include="Version"/><Folder Include="GVLs"/>
+    <Folder Include="ITFs"/>
+    <Folder Include="Test"/>
+    <Folder Include="POUs"/>
   </ItemGroup>
   <ItemGroup>
     <PlaceholderReference Include="Tc2_Standard">
@@ -205,7 +207,7 @@
         <v>{8F99A816-E488-41E4-9FA3-846536012284}</v>
         <o>
           <v n="Name">"{8F99A816-E488-41E4-9FA3-846536012284}"</v>
-          <d n="SubKeys" t="Hashtable" />
+          <d n="SubKeys" t="Hashtable"/>
           <d n="Values" t="Hashtable" ckt="String" cvt="String">
             <v>DisabledWarningIds</v>
             <v>410,5410</v>
@@ -218,16 +220,16 @@
             <v>Rules</v>
             <o>
               <v n="Name">"Rules"</v>
-              <d n="SubKeys" t="Hashtable" />
-              <d n="Values" t="Hashtable" />
+              <d n="SubKeys" t="Hashtable"/>
+              <d n="Values" t="Hashtable"/>
             </o>
           </d>
-          <d n="Values" t="Hashtable" />
+          <d n="Values" t="Hashtable"/>
         </o>
         <v>{40450F57-0AA3-4216-96F3-5444ECB29763}</v>
         <o>
           <v n="Name">"{40450F57-0AA3-4216-96F3-5444ECB29763}"</v>
-          <d n="SubKeys" t="Hashtable" />
+          <d n="SubKeys" t="Hashtable"/>
           <d n="Values" t="Hashtable" ckt="String">
             <v>ActiveVisuExtensionsLength</v>
             <v>0</v>
@@ -238,7 +240,7 @@
         <v>{8A0FB252-96EB-4DCC-A5B4-B4804D05E2D6}</v>
         <o>
           <v n="Name">"{8A0FB252-96EB-4DCC-A5B4-B4804D05E2D6}"</v>
-          <d n="SubKeys" t="Hashtable" />
+          <d n="SubKeys" t="Hashtable"/>
           <d n="Values" t="Hashtable" ckt="String" cvt="Boolean">
             <v>WriteLineIDs</v>
             <v>False</v>
@@ -247,13 +249,13 @@
         <v>{192FAD59-8248-4824-A8DE-9177C94C195A}</v>
         <o>
           <v n="Name">"{192FAD59-8248-4824-A8DE-9177C94C195A}"</v>
-          <d n="SubKeys" t="Hashtable" />
-          <d n="Values" t="Hashtable" />
+          <d n="SubKeys" t="Hashtable"/>
+          <d n="Values" t="Hashtable"/>
         </o>
         <v>{F66C7017-BDD8-4114-926C-81D6D687E35F}</v>
         <o>
           <v n="Name">"{F66C7017-BDD8-4114-926C-81D6D687E35F}"</v>
-          <d n="SubKeys" t="Hashtable" />
+          <d n="SubKeys" t="Hashtable"/>
           <d n="Values" t="Hashtable" ckt="String" cvt="Boolean">
             <v>CalcActiveTransOnly</v>
             <v>True</v>
@@ -262,11 +264,11 @@
         <v>{246001F4-279D-43AC-B241-948EB31120E1}</v>
         <o>
           <v n="Name">"{246001F4-279D-43AC-B241-948EB31120E1}"</v>
-          <d n="SubKeys" t="Hashtable" />
-          <d n="Values" t="Hashtable" />
+          <d n="SubKeys" t="Hashtable"/>
+          <d n="Values" t="Hashtable"/>
         </o>
       </d>
-      <d n="Values" t="Hashtable" />
+      <d n="Values" t="Hashtable"/>
     </o>
   </Data>
   <TypeList>
