@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <Itf Name="I_Quat" Id="{d6831b85-2c4c-4d0a-b783-213a1dbe68b8}">
+    <Declaration><![CDATA[
+INTERFACE I_Quat EXTENDS I_Vec3
+]]></Declaration>
+    <Property Name="w" Id="{1e2facaf-ec30-4cec-90d5-e084127bc0f9}">
+      <Declaration><![CDATA[
+PROPERTY w : LREAL
+]]></Declaration>
+      <Get Name="Get" Id="{8f4d5b69-a2e5-49ed-8aef-4c45ad79831d}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_Dot_Test" Id="{03d1ef97-7d1f-4445-bef6-f67bdf43673b}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_Dot_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestInputVec3ExpectCorrectResult();
+]]></ST>
+    </Implementation>
+    <Method Name="TestInputVec3ExpectCorrectResult" Id="{4ee3e828-2f40-45ff-b864-182ffb6a7a15}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestInputVec3ExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+    fbV2 : FB_Vec3;
+    fbV3 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestInputVec3ExpectCorrectResult');
+
+fbV1.Set(1, 2, 3);
+fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+fbV3.Set(43, 12, 856);
+
+AssertEquals_LREAL(
+    Expected := 0.250396196513470,
+    Actual := F_Dot(fbV1, fbV2),
+    Delta := 1e-10,
+    Message := 'Dot product was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 24.144215530903324,
+    Actual := F_Dot(fbV2, fbV3),
+    Delta := 1e-10,
+    Message := 'Dot product was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

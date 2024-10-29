@@ -1,0 +1,575 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_EulerRotateVec3Frame_Test" Id="{f0ae2325-f437-470b-b8d2-0fe70c9208fe}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_EulerRotateVec3Frame_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestRandInputOrderXYXExpectCorrectResult();
+
+TestRandInputOrderXYZExpectCorrectResult();
+
+TestRandInputOrderXZXExpectCorrectResult();
+
+TestRandInputOrderXZYExpectCorrectResult();
+
+TestRandInputOrderYXYExpectCorrectResult();
+
+TestRandInputOrderYXZExpectCorrectResult();
+
+TestRandInputOrderYZXExpectCorrectResult();
+
+TestRandInputOrderYZYExpectCorrectResult();
+
+TestRandInputOrderZXYExpectCorrectResult();
+
+TestRandInputOrderZXZExpectCorrectResult();
+
+TestRandInputOrderZYXExpectCorrectResult();
+
+TestRandInputOrderZYZExpectCorrectResult();
+]]></ST>
+    </Implementation>
+    <Method Name="TestRandInputOrderXYXExpectCorrectResult" Id="{a4958b1a-1b27-42a2-bd32-2b9fe8780e19}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXYXExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderXYXExpectCorrectResult');
+
+fbV1.Set(-2.021958930051790, -0.982131525779048, 0.612511298166949);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.322471807186779,
+    fBetaRadians := 0.784739294760742,
+    fGammaRadians := 0.471357153710612,
+    sOrder := 'XYX',
+);
+
+AssertEquals_LREAL(
+    Expected := -2.061139365755713,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -1.019130701155565,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.375695978181459,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderXYZExpectCorrectResult" Id="{19111214-a961-4915-bf2e-1235171c8593}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXYZExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderXYZExpectCorrectResult');
+
+fbV1.Set(0.199189444075264, -1.521026561768955, -0.723631125289073);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.242849598318169,
+    fBetaRadians := 0.917424342049382,
+    fGammaRadians := 0.269061586686018,
+    sOrder := 'XYZ',
+);
+
+AssertEquals_LREAL(
+    Expected := -0.064312669898517,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -1.694268277767355,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.046466387492415,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderXZXExpectCorrectResult" Id="{f74a1b18-527d-4d63-8c35-a5349458003f}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXZXExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderXZXExpectCorrectResult');
+
+fbV1.Set(0.249517740562795, -0.993019006549601, 0.974950224811312);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.473485992965320,
+    fBetaRadians := 0.152721200438232,
+    fGammaRadians := 0.341124607049109,
+    sOrder := 'XZX',
+);
+
+AssertEquals_LREAL(
+    Expected := 0.179798511595315,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.003079956237309,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.402332628224000,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderXZYExpectCorrectResult" Id="{349008ff-64ea-487d-88f7-afd3f27c677a}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXZYExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderXZYExpectCorrectResult');
+
+fbV1.Set(-0.307503469862751, -0.131820352915894, 0.595357673884102);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.236230576993797,
+    fBetaRadians := 0.119396247797306,
+    fGammaRadians := 0.607303940685635,
+    sOrder := 'XZY',
+);
+
+AssertEquals_LREAL(
+    Expected := -0.597541393105688,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.047725946588189,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.327188427088682,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYXYExpectCorrectResult" Id="{36f0f7c5-f235-419a-ae4a-72846ce6b258}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYXYExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderYXYExpectCorrectResult');
+
+fbV1.Set(0.593930795648753, -2.186021612748235, -1.327043149520291);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.676122303863752,
+    fBetaRadians := 0.289064571674477,
+    fGammaRadians := 0.671808165414215,
+    sOrder := 'YXY',
+);
+
+AssertEquals_LREAL(
+    Expected := 1.020522330355508,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -2.284441460148486,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.795203867263931,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYXZExpectCorrectResult" Id="{20c59762-1e48-4962-88d3-2e5872b010fb}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYXZExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderYXZExpectCorrectResult');
+
+fbV1.Set(0.092307951238962, 1.729841391572364, -0.608557444738319);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.256440992229147,
+    fBetaRadians := 0.613460736812875,
+    fGammaRadians := 0.582249164527227,
+    sOrder := 'YXZ',
+);
+
+AssertEquals_LREAL(
+    Expected := 0.802349778436683,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.775592528782256,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -1.458048429835282,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYZXExpectCorrectResult" Id="{f8417395-40ee-40cb-8f67-277f2350f9bf}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYZXExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderYZXExpectCorrectResult');
+
+fbV1.Set(0.300485967595730, -0.373070658631004, 0.815488508092498);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.091113463686535,
+    fBetaRadians := 0.576209380663007,
+    fGammaRadians := 0.683363243294653,
+    sOrder := 'YZX',
+);
+
+AssertEquals_LREAL(
+    Expected := -0.014563309572440,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.192362554518954,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.925893945070105,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYZYExpectCorrectResult" Id="{2220c2de-9002-4fac-b6ef-b270aef7a211}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYZYExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderYZYExpectCorrectResult');
+
+fbV1.Set(0.312023828329274, 1.804493771724187, -0.723121479570418);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.875371598604185,
+    fBetaRadians := 0.518052108361104,
+    fGammaRadians := 0.943622624548388,
+    sOrder := 'YZY',
+);
+
+AssertEquals_LREAL(
+    Expected := 1.090560751359501,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.193792538056564,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.123386816518432,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZXYExpectCorrectResult" Id="{346f7fad-5ef3-41e1-b875-3b5f4d406011}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZXYExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderZXYExpectCorrectResult');
+
+fbV1.Set(0.412796010311392, -0.986961883351522, 0.759568325914783);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.647617630172684,
+    fBetaRadians := 0.679016754093202,
+    fGammaRadians := 0.635786710514084,
+    sOrder := 'ZXY',
+);
+
+AssertEquals_LREAL(
+    Expected := -0.951602112563449,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.329299698220112,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.841102535466216,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZXZExpectCorrectResult" Id="{fde18361-e3b7-4f10-947c-1ef99819de32}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZXZExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderZXZExpectCorrectResult');
+
+fbV1.Set(1.516266896645953, -0.032566509194481, 1.635999657278292);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.006715314318477,
+    fBetaRadians := 0.602170487581795,
+    fGammaRadians := 0.386771194520985,
+    sOrder := 'ZXZ',
+);
+
+AssertEquals_LREAL(
+    Expected := 1.740285496415775,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.253763748205014,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.372454410558687,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZYXExpectCorrectResult" Id="{5301933a-a53f-438a-a65b-dca5ba0cd2c8}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZYXExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderZYXExpectCorrectResult');
+
+fbV1.Set(-0.238301504589733, 0.229596893220314, 0.439997904822629);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.770285514803660,
+    fBetaRadians := 0.350218013441105,
+    fGammaRadians := 0.662009598359135,
+    sOrder := 'ZYX',
+);
+
+AssertEquals_LREAL(
+    Expected := -0.161441613986054,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.512558476646013,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.119670004622508,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZYZExpectCorrectResult" Id="{ec6a9e52-df01-4978-97b7-fd7197b05af8}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZYZExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputOrderZYZExpectCorrectResult');
+
+fbV1.Set(-0.326814228785906, 0.812323004640796, 0.545540103526116);
+fbV1 := F_EulerRotateVec3Frame(
+    iVec3 := fbV1,
+    fAlphaRadians := 0.224040030824219,
+    fBetaRadians := 0.667832727013717,
+    fGammaRadians := 0.844392156527205,
+    sOrder := 'ZYZ',
+);
+
+AssertEquals_LREAL(
+    Expected := 0.349920881984102,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.907939120979554,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.342771261203743,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

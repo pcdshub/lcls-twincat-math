@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_NormalizedVec3_Test" Id="{6e5dfa6d-5796-4e85-b3d4-77b362276ca5}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_NormalizedVec3_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestInputVec3ExpectCorrectResult();
+
+TestNormalizeBy0ExpectErrorUnchanged();
+]]></ST>
+    </Implementation>
+    <Method Name="TestInputVec3ExpectCorrectResult" Id="{ca16ac2a-67aa-42b3-8199-d47233eeeeea}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestInputVec3ExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestInputVec3ExpectCorrectResult');
+
+fbV1.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+fbV1 := F_NormalizedVec3(
+    iVec3 := fbV1,
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertFalse(
+    Condition := bError,
+    Message := 'Should not have had an error on normalize.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg = '',
+    Message := 'Should have empty error message on normalize.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.995843629013136,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.043613589591816,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.079958247584997,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestNormalizeBy0ExpectErrorUnchanged" Id="{a38cd922-bfa4-425c-a0b2-8098e4329017}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestNormalizeBy0ExpectErrorUnchanged
+VAR
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestNormalizeBy0ExpectErrorUnchanged');
+
+fbV1.Set(0, 0, 0);
+fbV1 := F_NormalizedVec3(
+    iVec3 := fbV1,
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertTrue(
+    Condition := bError,
+    Message := 'Should have had an error on normalize.'
+);
+
+AssertFalse(
+    Condition := sErrorMsg = '',
+    Message := 'Should not have empty error message on normalize.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbV1.x,
+    Delta := 0.0,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbV1.y,
+    Delta := 0.0,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbV1.z,
+    Delta := 0.0,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

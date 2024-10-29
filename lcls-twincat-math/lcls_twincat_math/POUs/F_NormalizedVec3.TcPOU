@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_NormalizedVec3" Id="{124532f5-aeb8-47b1-9522-ea7052b4cfbb}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_NormalizedVec3 : FB_Vec3
+VAR_INPUT
+    iVec3 : I_Vec3;
+END_VAR
+VAR_OUTPUT
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+VAR
+    fNorm : LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+bError := FALSE;
+sErrorMsg := '';
+
+fNorm := F_NormVec3(iVec3);
+
+IF fNorm = 0.0 THEN
+    bError := TRUE;
+    sErrorMsg := 'Error: cannot normalize a vector with a norm of 0.';
+    F_NormalizedVec3.x := iVec3.x;
+    F_NormalizedVec3.y := iVec3.y;
+    F_NormalizedVec3.z := iVec3.z;
+    RETURN;
+END_IF
+
+F_NormalizedVec3.x := iVec3.x / fNorm;
+F_NormalizedVec3.y := iVec3.y / fNorm;
+F_NormalizedVec3.z := iVec3.z / fNorm;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

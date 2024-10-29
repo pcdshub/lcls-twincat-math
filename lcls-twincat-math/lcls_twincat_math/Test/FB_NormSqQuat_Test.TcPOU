@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_NormSqQuat_Test" Id="{8b9c7ae5-14fa-486d-a3e8-c8be113776ae}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_NormSqQuat_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestInputQuatExpectCorrectResult();
+]]></ST>
+    </Implementation>
+    <Method Name="TestInputQuatExpectCorrectResult" Id="{5be302c3-b52a-435f-8238-a7239670a779}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestInputQuatExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+    fbQ2 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestInputQuatExpectCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+fbQ2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+
+AssertEquals_LREAL(
+    Expected := 30.0,
+    Actual := F_NormSqQuat(fbQ1),
+    Delta := 1e-10,
+    Message := 'Norm squared was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.047543581616482,
+    Actual := F_NormSqQuat(fbQ2),
+    Delta := 1e-10,
+    Message := 'Norm squared was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

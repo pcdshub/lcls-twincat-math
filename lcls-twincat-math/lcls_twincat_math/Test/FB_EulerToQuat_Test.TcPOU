@@ -1,0 +1,1283 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_EulerToQuat_Test" Id="{ffb67f0f-5720-467e-b130-85867bac64a0}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_EulerToQuat_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestRandInputOrderXYXFrameExpectCorrectResult();
+
+TestRandInputOrderXYXPointExpectCorrectResult();
+
+TestRandInputOrderXYZFrameExpectCorrectResult();
+
+TestRandInputOrderXYZPointExpectCorrectResult();
+
+TestRandInputOrderXZXFrameExpectCorrectResult();
+
+TestRandInputOrderXZXPointExpectCorrectResult();
+
+TestRandInputOrderXZYFrameExpectCorrectResult();
+
+TestRandInputOrderXZYPointExpectCorrectResult();
+
+TestRandInputOrderYXYFrameExpectCorrectResult();
+
+TestRandInputOrderYXYPointExpectCorrectResult();
+
+TestRandInputOrderYXZFrameExpectCorrectResult();
+
+TestRandInputOrderYXZPointExpectCorrectResult();
+
+TestRandInputOrderYZXFrameExpectCorrectResult();
+
+TestRandInputOrderYZXPointExpectCorrectResult();
+
+TestRandInputOrderYZYFrameExpectCorrectResult();
+
+TestRandInputOrderYZYPointExpectCorrectResult();
+
+TestRandInputOrderZXYFrameExpectCorrectResult();
+
+TestRandInputOrderZXYPointExpectCorrectResult();
+
+TestRandInputOrderZXZFrameExpectCorrectResult();
+
+TestRandInputOrderZXZPointExpectCorrectResult();
+
+TestRandInputOrderZYXFrameExpectCorrectResult();
+
+TestRandInputOrderZYXPointExpectCorrectResult();
+
+TestRandInputOrderZYZFrameExpectCorrectResult();
+
+TestRandInputOrderZYZPointExpectCorrectResult();
+]]></ST>
+    </Implementation>
+    <Method Name="TestRandInputOrderXYXFrameExpectCorrectResult" Id="{37ffe4d5-9e32-40fe-bce2-0936115c6cdf}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXYXFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderXYXFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.119214541054191,
+    fBetaRadians := 0.939829470344921,
+    fGammaRadians := 0.645551874972524,
+    sOrder := 'XYX',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.827213283190194,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.332687614201764,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.437220244802662,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.117794707033628,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderXYXPointExpectCorrectResult" Id="{2bf1006c-5121-49ca-979e-b310f972eb26}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXYXPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderXYXPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.798960278812879,
+    fBetaRadians := 0.734341083695970,
+    fGammaRadians := 0.051331886112371,
+    sOrder := 'XYX',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.850258847901497,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.384962489257288,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.334185588573854,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.131086863642391,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderXYZFrameExpectCorrectResult" Id="{768f059f-9a74-414b-b9cb-57704e53d0ef}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXYZFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderXYZFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.647311480293128,
+    fBetaRadians := 0.543885933999639,
+    fGammaRadians := 0.721046620579811,
+    sOrder := 'XYZ',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.824393119618149,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.376486704391404,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.130217834572788,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.402090861997547,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderXYZPointExpectCorrectResult" Id="{9e458767-0f6c-4bf0-b255-780e3ec846be}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXYZPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderXYZPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.943008139570703,
+    fBetaRadians := 0.683715572408358,
+    fGammaRadians := 0.132082955713563,
+    sOrder := 'XYZ',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.847553031313486,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.407299809816023,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.326249172525653,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.096551548208610,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderXZXFrameExpectCorrectResult" Id="{7ae6a95d-89bf-41dd-b390-b517ed571a40}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXZXFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderXZXFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.479463224948888,
+    fBetaRadians := 0.639316961040108,
+    fGammaRadians := 0.544716110526763,
+    sOrder := 'XZX',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.827563449078756,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.465177898226948,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.010250791515732,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.314075121624324,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderXZXPointExpectCorrectResult" Id="{f03c0887-4656-4659-9923-c1f1fece7d12}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXZXPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderXZXPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.072885299098976,
+    fBetaRadians := 0.088527459674720,
+    fGammaRadians := 0.798350864113952,
+    sOrder := 'XZX',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.905721398247271,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.421557528972582,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.015700993875632,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.041370005013976,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderXZYFrameExpectCorrectResult" Id="{121aff5f-7dbc-4c5c-be42-bb8d480e454d}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXZYFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderXZYFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.404579995857626,
+    fBetaRadians := 0.448372912066495,
+    fGammaRadians := 0.365816176838171,
+    sOrder := 'XZY',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.947286828124650,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.153005782173851,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.129801496877097,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.249776834977489,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderXZYPointExpectCorrectResult" Id="{84ebf4a0-1a35-40f0-924c-c98a94c0100c}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderXZYPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderXZYPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.749131463103519,
+    fBetaRadians := 0.583185731454876,
+    fGammaRadians := 0.740032327987778,
+    sOrder := 'XZY',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.793017227753245,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.423460819859790,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.420411214477314,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.122715203915174,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYXYFrameExpectCorrectResult" Id="{e5e8b409-0892-416b-8e35-219cb228cf80}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYXYFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderYXYFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.841929152691309,
+    fBetaRadians := 0.832916819075216,
+    fGammaRadians := 0.256440992229147,
+    sOrder := 'YXY',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.780046262173955,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.387313876836655,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.477376234063598,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.116737829470396,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYXYPointExpectCorrectResult" Id="{c6f865f2-4e46-44ba-ae56-a3c557bdead9}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYXYPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderYXYPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.780175531491174,
+    fBetaRadians := 0.337583864052045,
+    fGammaRadians := 0.607865907262946,
+    sOrder := 'YXY',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.757756295545279,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.167368486603411,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.630542804357751,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.014455383988052,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYXZFrameExpectCorrectResult" Id="{0e5e0d29-4a08-4a38-9889-19becfabfd3d}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYXZFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderYXZFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.932853570278820,
+    fBetaRadians := 0.972740854003014,
+    fGammaRadians := 0.192028349427775,
+    sOrder := 'YXZ',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.806117529539960,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.453679653118559,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.355694027916462,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.133532990003141,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYXZPointExpectCorrectResult" Id="{0b9ec23f-cde3-43cf-90e3-606274ae299b}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYXZPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderYXZPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.866930291751916,
+    fBetaRadians := 0.086234529863496,
+    fGammaRadians := 0.366436616319199,
+    sOrder := 'YXZ',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.888198299305905,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.037991292068212,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.419731083626482,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.182992514258983,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYZXFrameExpectCorrectResult" Id="{8da99d10-8ab0-4839-930c-dce05c1a05ce}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYZXFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderYZXFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.522495305777102,
+    fBetaRadians := 0.993704624120852,
+    fGammaRadians := 0.218676632399634,
+    sOrder := 'YZX',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.830752828301988,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.215051263380013,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.275948754905312,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.432960710749967,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYZXPointExpectCorrectResult" Id="{dc245638-ef5b-4787-b3e0-78f21ea5bed2}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYZXPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderYZXPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.722724539656766,
+    fBetaRadians := 0.110353480642349,
+    fGammaRadians := 0.117492852151833,
+    sOrder := 'YZX',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.933526058516332,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.035373025787237,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.349373021050654,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.072224229172457,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYZYFrameExpectCorrectResult" Id="{3b009e63-8083-4d41-a575-a3c68dedf7c9}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYZYFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderYZYFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.350218013441105,
+    fBetaRadians := 0.662009598359135,
+    fGammaRadians := 0.416158589969796,
+    sOrder := 'YZY',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.877130381214949,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.010713186449320,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.353583870687606,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.324816822802316,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderYZYPointExpectCorrectResult" Id="{fbbeb9ea-3ef5-47d2-8176-ded5e2d5200e}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderYZYPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderYZYPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.556669834964013,
+    fBetaRadians := 0.396520792581593,
+    fGammaRadians := 0.061590667053965,
+    sOrder := 'YZY',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.933937796220430,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.048260003861111,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.298270572948459,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.190960284172521,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZXYFrameExpectCorrectResult" Id="{332a232f-f04c-4c8c-9951-85dcb4fd19ef}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZXYFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderZXYFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.105798273250228,
+    fBetaRadians := 0.109697464523194,
+    fGammaRadians := 0.063591370975106,
+    sOrder := 'ZXY',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.996503332840651,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.053038510576807,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.034595297716914,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.054508617751202,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZXYPointExpectCorrectResult" Id="{5f15a2fc-2592-4339-a3b9-730ff68eb2b0}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZXYPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderZXYPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.640717922965926,
+    fBetaRadians := 0.328814214756803,
+    fGammaRadians := 0.653812022595774,
+    sOrder := 'ZXY',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.903286974576468,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.246871402821694,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.251856640945832,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.244326389161757,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZXZFrameExpectCorrectResult" Id="{1b04eb07-2875-4acd-98cf-d20d2db17397}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZXZFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderZXZFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.869941032358007,
+    fBetaRadians := 0.264779026475630,
+    fGammaRadians := 0.318074075481059,
+    sOrder := 'ZXZ',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.821452622922216,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.127009613457024,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.035963619440219,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.554788936858394,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZXZPointExpectCorrectResult" Id="{05e77cc3-b5cd-4056-8790-6d3fce78f1d9}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZXZPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderZXZPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.549540107015198,
+    fBetaRadians := 0.485229408584959,
+    fGammaRadians := 0.890475679184438,
+    sOrder := 'ZXZ',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.729782642647554,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.236759395391620,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.040755390794522,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.640079121129047,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZYXFrameExpectCorrectResult" Id="{a1c7c6a5-eeb6-41fa-93fc-268aa1527f4e}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZYXFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderZYXFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.763504640848813,
+    fBetaRadians := 0.627896379614169,
+    fGammaRadians := 0.771980385554245,
+    sOrder := 'ZYX',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.861026411705370,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.225714405773896,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.398900238099248,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.220374965493531,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZYXPointExpectCorrectResult" Id="{d1b8644f-3bba-453c-b9ea-f183b56672d7}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZYXPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderZYXPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.234826914747904,
+    fBetaRadians := 0.734957541696052,
+    fGammaRadians := 0.970598525086614,
+    sOrder := 'ZYX',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.800165116206764,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.469558407591350,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.264597310798463,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.263132954576793,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZYZFrameExpectCorrectResult" Id="{88ce6fee-0e1f-41fb-856d-78239126d0f6}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZYZFrameExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderZYZFrameExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.613460736812875,
+    fBetaRadians := 0.582249164527227,
+    fGammaRadians := 0.540739337124410,
+    sOrder := 'ZYZ',
+    bFrame := TRUE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.802784722480366,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.010434300055502,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.286839947995462,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.522638172131002,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputOrderZYZPointExpectCorrectResult" Id="{07548eca-90a6-4490-963d-93770c9449fc}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputOrderZYZPointExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestOrderZYZPointExpectCorrectResult');
+
+fbQ1 := F_EulerToQuat(
+    fAlphaRadians := 0.741254049502218,
+    fBetaRadians := 0.104813241973500,
+    fGammaRadians := 0.127888379782995,
+    sOrder := 'ZYZ',
+    bFrame := FALSE
+);
+
+AssertEquals_LREAL(
+    Expected := 0.905805352175926,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.015814208515679,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.049938475311539,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.420443484266349,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

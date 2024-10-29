@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_EulerToQuat" Id="{01708f90-eaca-4f37-8832-e38a57776c1b}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_EulerToQuat : FB_Quaternion
+VAR_INPUT
+    fAlphaRadians : LREAL; // Euler angle around first rotation axis
+    fBetaRadians : LREAL; // Euler angle around second rotation axis
+    fGammaRadians : LREAL; // Euler angle around third rotation axis
+    sOrder : STRING := 'ZYX'; // Default or invalid input = ZYX.
+    // YZY, YXY, ZYZ, ZXZ, XYX, XZX, XYZ, YZX, ZXY, XZY, ZYX, YXZ
+    bFrame : BOOL := TRUE; // TRUE = get quaternion to rotate frame. FALSE = get quaternion to rotate point.
+END_VAR
+VAR
+    fbVx : FB_Vec3;
+    fbVy : FB_Vec3;
+    fbVz : FB_Vec3;
+    fbQa : FB_Quaternion;
+    fbQb : FB_Quaternion;
+    fbQg : FB_Quaternion;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+fbVx.Set(1.0, 0.0, 0.0);
+fbVy.Set(0.0, 1.0, 0.0);
+fbVz.Set(0.0, 0.0, 1.0);
+
+IF sOrder = 'XYX' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fGammaRadians
+    );
+ELSIF sOrder = 'XYZ' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fGammaRadians
+    );
+ELSIF sOrder = 'XZX' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fGammaRadians
+    );
+ELSIF sOrder = 'XZY' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fGammaRadians
+    );
+ELSIF sOrder = 'YXY' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fGammaRadians
+    );
+ELSIF sOrder = 'YXZ' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fGammaRadians
+    );
+ELSIF sOrder = 'YZX' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fGammaRadians
+    );
+ELSIF sOrder = 'YZY' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fGammaRadians
+    );
+ELSIF sOrder = 'ZXY' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fGammaRadians
+    );
+ELSIF sOrder = 'ZXZ' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fGammaRadians
+    );
+ELSIF sOrder = 'ZYX' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fGammaRadians
+    );
+ELSIF sOrder = 'ZYZ' THEN
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fGammaRadians
+    );
+ELSE // ZYX
+    fbQa := F_AxisAngleQuat(
+        iAxis := fbVz,
+        fRadians := fAlphaRadians
+    );
+    fbQb := F_AxisAngleQuat(
+        iAxis := fbVy,
+        fRadians := fBetaRadians
+    );
+    fbQg := F_AxisAngleQuat(
+        iAxis := fbVx,
+        fRadians := fGammaRadians
+    );
+END_IF
+
+IF bFrame THEN
+    F_EulerToQuat := F_MulQuat(fbQb, fbQg);
+    F_EulerToQuat := F_MulQuat(fbQa, F_EulerToQuat);
+ELSE
+    F_EulerToQuat := F_MulQuat(fbQb, fbQa);
+    F_EulerToQuat := F_MulQuat(fbQg, F_EulerToQuat);
+END_IF
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_NormVec3_Test" Id="{85ce7723-96de-4b5e-88d9-824236a82b5b}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_NormVec3_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestInputVec3ExpectCorrectResult();
+]]></ST>
+    </Implementation>
+    <Method Name="TestInputVec3ExpectCorrectResult" Id="{2841efde-af67-4246-b805-adf4a17906b0}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestInputVec3ExpectCorrectResult
+VAR
+    fbV1 : FB_Vec3;
+    fbV2 : FB_Vec3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestInputVec3ExpectCorrectResult');
+
+fbV1.Set(1, 2, 3);
+fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+
+AssertEquals_LREAL(
+    Expected := 3.741657386773941,
+    Actual := F_NormVec3(fbV1),
+    Delta := 1e-10,
+    Message := 'Norm was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.218021869153384,
+    Actual := F_NormVec3(fbV2),
+    Delta := 1e-10,
+    Message := 'Norm was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

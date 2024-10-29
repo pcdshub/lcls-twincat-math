@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_NormalizedQuat_Test" Id="{1b2de43b-1ed6-4946-9b74-ec2ebf182775}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_NormalizedQuat_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestInputVec4ExpectCorrectResult();
+
+TestNormalizeBy0ExpectErrorUnchanged();
+]]></ST>
+    </Implementation>
+    <Method Name="TestInputVec4ExpectCorrectResult" Id="{0ec8648e-d96a-49d2-a502-aae8c33fd556}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestInputVec4ExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestInputVec4ExpectCorrectResult');
+
+fbQ1.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+fbQ1 := F_NormalizedQuat(
+    iQuat := fbQ1,
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertFalse(
+    Condition := bError,
+    Message := 'Should not have had an error on normalize.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg = '',
+    Message := 'Should have empty error message on normalize.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.995738410181524,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.043608981467804,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0799497993576408,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.0145363271559347,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestNormalizeBy0ExpectErrorUnchanged" Id="{fd203c46-e354-448c-ada7-6492284d4526}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestNormalizeBy0ExpectErrorUnchanged
+VAR
+    fbQ1 : FB_Quaternion;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestNormalizeBy0ExpectErrorUnchanged');
+
+fbQ1.Set(0, 0, 0, 0);
+fbQ1 := F_NormalizedQuat(
+    iQuat := fbQ1,
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertTrue(
+    Condition := bError,
+    Message := 'Should have had an error on normalize.'
+);
+
+AssertFalse(
+    Condition := sErrorMsg = '',
+    Message := 'Should not have empty error message on normalize.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ1.w,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ1.x,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ1.y,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ1.z,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

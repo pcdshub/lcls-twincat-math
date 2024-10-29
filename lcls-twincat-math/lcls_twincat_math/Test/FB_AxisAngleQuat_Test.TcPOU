@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_AxisAngleQuat_Test" Id="{90a38288-ea31-4eb1-b234-be9ce10cb90b}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_AxisAngleQuat_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestInputRadians0AxisExpectErrorIdentityQuat();
+
+TestInputRadiansAxisExpectCorrectResult();
+]]></ST>
+    </Implementation>
+    <Method Name="TestInputRadians0AxisExpectErrorIdentityQuat" Id="{034c25f6-6403-46b0-8729-6802f84bf1fe}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestInputRadians0AxisExpectErrorIdentityQuat
+VAR
+    fbQ1 : FB_Quaternion;
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestInputRadians0AxisExpectErrorIdentityQuat');
+
+fbV1.Set(0, 0, 0);
+fbQ1 := F_AxisAngleQuat(
+    fRadians := GVL_Constants.PI / 3.0,
+    iAxis := fbV1,
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertTrue(
+    Condition := bError,
+    Message := 'Should have had an error.'
+);
+
+AssertFalse(
+    Condition := sErrorMsg = '',
+    Message := 'Should not have empty error message.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.0,
+    Actual := fbQ1.w,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ1.x,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ1.y,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ1.z,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestInputRadiansAxisExpectCorrectResult" Id="{fe9fa547-79c6-45f0-a321-787901d7ec4d}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestInputRadiansAxisExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+    fbQ2 : FB_Quaternion;
+    fbQ3 : FB_Quaternion;
+    fbV1 : FB_Vec3;
+    fbV2 : FB_Vec3;
+    fbV3 : FB_Vec3;
+
+    bError1 : BOOL;
+    bError2 : BOOL;
+    bError3 : BOOL;
+    sErrorMsg1 : T_MaxString;
+    sErrorMsg2 : T_MaxString;
+    sErrorMsg3 : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestInputRadiansAxisExpectCorrectResult');
+
+fbV1.Set(0.3, 1.6, 2.43);
+fbQ1 := F_AxisAngleQuat(
+    fRadians := -GVL_Constants.PI / 3.0,
+    iAxis := fbV1,
+    bError => bError1,
+    sErrorMsg => sErrorMsg1
+);
+
+fbV2.Set(0.537667139546100, 1.833885014595086, -2.258846861003648);
+fbQ2 := F_AxisAngleQuat(
+    fRadians := 0.862173320368121,
+    iAxis := fbV2,
+    bError => bError2,
+    sErrorMsg => sErrorMsg2
+);
+
+fbV3.Set(0.537667139546100, 1.833885014595086, -2.258846861003648);
+fbQ3 := F_AxisAngleQuat(
+    fRadians := 0.0,
+    iAxis := fbV3,
+    bError => bError3,
+    sErrorMsg => sErrorMsg3
+);
+
+AssertFalse(
+    Condition := bError1,
+    Message := 'Should not have had an error on first call.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg1 = '',
+    Message := 'Should have empty error message on first call.'
+);
+
+AssertFalse(
+    Condition := bError2,
+    Message := 'Should not have had an error on second call.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg2 = '',
+    Message := 'Should have empty error message on second call.'
+);
+
+AssertFalse(
+    Condition := bError3,
+    Message := 'Should not have had an error on third call.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg3 = '',
+    Message := 'Should have empty error message on third call.'
+);
+
+// Q1
+AssertEquals_LREAL(
+    Expected := 0.866025403784439,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.051284224229690,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.273515862558345,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.415402216260486,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+// Q2
+AssertEquals_LREAL(
+    Expected := 0.908512216194018,
+    Actual := fbQ2.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 2 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.075931876866402,
+    Actual := fbQ2.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 2 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.258989848687666,
+    Actual := fbQ2.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 2 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.319004955100260,
+    Actual := fbQ2.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 2 [z] was not the expected value.'
+);
+
+// Q3
+AssertEquals_LREAL(
+    Expected := 1.0,
+    Actual := fbQ3.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 3 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ3.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 3 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ3.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 3 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ3.z,
+    Delta := 1e-10,
+    Message := 'Quaternion3 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

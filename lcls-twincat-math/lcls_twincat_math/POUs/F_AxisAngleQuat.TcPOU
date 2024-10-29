@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_AxisAngleQuat" Id="{16d261f2-c6c9-438c-9331-3a19417e1839}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_AxisAngleQuat : FB_Quaternion
+VAR_INPUT
+    iAxis : I_Vec3;
+    fRadians : LREAL;
+END_VAR
+VAR_OUTPUT
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+VAR
+    fNorm : LREAL;
+    fMultiplier : LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+bError := FALSE;
+sErrorMsg := '';
+
+fNorm := F_NormVec3(iAxis);
+
+IF fNorm = 0.0 THEN
+    bError := TRUE;
+    sErrorMsg := 'Error: cannot rotate around an axis with a norm of 0.';
+    F_AxisAngleQuat.w := 1.0;
+    F_AxisAngleQuat.x := 0.0;
+    F_AxisAngleQuat.y := 0.0;
+    F_AxisAngleQuat.z := 0.0;
+    RETURN;
+END_IF
+
+fMultiplier := SIN(fRadians / 2.0) / fNorm;
+
+F_AxisAngleQuat.w := COS(fRadians / 2.0);
+F_AxisAngleQuat.x := fMultiplier * iAxis.x;
+F_AxisAngleQuat.y := fMultiplier * iAxis.y;
+F_AxisAngleQuat.z := fMultiplier * iAxis.z;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,377 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_QuatRotateVec3Frame_Test" Id="{d86f82e1-ca08-4636-927e-352491bfba5e}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_QuatRotateVec3Frame_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+Test0QuatExpectErrorUnchanged();
+
+TestRandInputExpectCorrectResult_1();
+
+TestRandInputExpectCorrectResult_2();
+
+TestRandInputExpectCorrectResult_3();
+
+TestRandInputExpectCorrectResult_4();
+
+TestRandInputExpectCorrectResult_5();
+]]></ST>
+    </Implementation>
+    <Method Name="Test0QuatExpectErrorUnchanged" Id="{708eddf4-7ad9-4827-9fdb-bb5368b1ba8b}">
+      <Declaration><![CDATA[
+METHOD PRIVATE Test0QuatExpectErrorUnchanged
+VAR
+    fbQ1 : FB_Quaternion;
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('Test0QuatExpectErrorUnchanged');
+
+fbQ1.Set(0, 0, 0, 0);
+fbV1.Set(1, 1, 1);
+fbV1 := F_QuatRotateVec3Frame(
+    iQuat := fbQ1,
+    iVec3 := fbV1,
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertTrue(
+    Condition := bError,
+    Message := 'Should have had an error.'
+);
+
+AssertFalse(
+    Condition := sErrorMsg = '',
+    Message := 'Should not have empty error message.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1,
+    Actual := fbV1.x,
+    Delta := 0.0,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1,
+    Actual := fbV1.y,
+    Delta := 0.0,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1,
+    Actual := fbV1.z,
+    Delta := 0.0,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputExpectCorrectResult_1" Id="{86aee5ed-e274-4192-8d26-d682a4f0a453}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputExpectCorrectResult_1
+VAR
+    fbQ1 : FB_Quaternion;
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputExpectCorrectResult_1');
+
+fbQ1.Set(0.350952380892271, 0.513249539867053, 0.401808033751942, 0.075966691690842);
+fbV1.Set(0.239916153553658, 0.123318934835166, 0.183907788282417);
+fbV1 := F_QuatRotateVec3Frame(
+    iQuat := fbQ1,
+    iVec3 := fbV1,
+    bError => bError,
+    sErrorMsg => sErrorMsg,
+);
+
+AssertFalse(
+    Condition := bError,
+    Message := 'Should not have had an error.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg = '',
+    Message := 'Should have empty error message.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.1309889114846021,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.298917056874025,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.008938299258921,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputExpectCorrectResult_2" Id="{ee29623f-54e0-4362-9c5e-817fa062c6f3}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputExpectCorrectResult_2
+VAR
+    fbQ1 : FB_Quaternion;
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputExpectCorrectResult_2');
+
+fbQ1.Set(0.239952525664903, 0.417267069084370, 0.049654430325742, 0.902716109915281);
+fbV1.Set(0.944787189721646, 0.490864092468080, 0.489252638400019);
+fbV1 := F_QuatRotateVec3Frame(
+    iQuat := fbQ1,
+    iVec3 := fbV1,
+    bError => bError,
+    sErrorMsg => sErrorMsg,
+);
+
+AssertFalse(
+    Condition := bError,
+    Message := 'Should not have had an error.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg = '',
+    Message := 'Should have empty error message.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0348639784144761,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.652315007988924,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.972732321185814,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputExpectCorrectResult_3" Id="{dce08210-7a25-4bbd-ac3b-0a4df4f5abc4}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputExpectCorrectResult_3
+VAR
+    fbQ1 : FB_Quaternion;
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputExpectCorrectResult_3');
+
+fbQ1.Set(0.337719409821377, 0.900053846417662, 0.369246781120215, 0.111202755293787);
+fbV1.Set(0.780252068321138, 0.389738836961253, 0.241691285913833);
+fbV1 := F_QuatRotateVec3Frame(
+    iQuat := fbQ1,
+    iVec3 := fbV1,
+    bError => bError,
+    sErrorMsg => sErrorMsg,
+);
+
+AssertFalse(
+    Condition := bError,
+    Message := 'Should not have had an error.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg = '',
+    Message := 'Should have empty error message.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.8216066116511471,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.376413959087926,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.048779462244682,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputExpectCorrectResult_4" Id="{3dc6fde8-5db1-44cc-9241-df2d82378a7d}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputExpectCorrectResult_4
+VAR
+    fbQ1 : FB_Quaternion;
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputExpectCorrectResult_4');
+
+fbQ1.Set(0.403912145588115, 0.096454525168389, 0.131973292606335, 0.942050590775485);
+fbV1.Set(0.956134540229802, 0.575208595078466, 0.059779542947156);
+fbV1 := F_QuatRotateVec3Frame(
+    iQuat := fbQ1,
+    iVec3 := fbV1,
+    bError => bError,
+    sErrorMsg => sErrorMsg,
+);
+
+AssertFalse(
+    Condition := bError,
+    Message := 'Should not have had an error.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg = '',
+    Message := 'Should have empty error message.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.2259527588901821,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -1.017084075917310,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.403877597661613,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestRandInputExpectCorrectResult_5" Id="{b3331450-c73b-4a7b-aa42-6a07d5c0c4ca}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestRandInputExpectCorrectResult_5
+VAR
+    fbQ1 : FB_Quaternion;
+    fbV1 : FB_Vec3;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestRandInputExpectCorrectResult_5');
+
+fbQ1.Set(0.234779913372406, 0.353158571222071, 0.821194040197959, 0.015403437651555);
+fbV1.Set(0.043023801657808, 0.168990029462704, 0.649115474956452);
+fbV1 := F_QuatRotateVec3Frame(
+    iQuat := fbQ1,
+    iVec3 := fbV1,
+    bError => bError,
+    sErrorMsg => sErrorMsg,
+);
+
+AssertFalse(
+    Condition := bError,
+    Message := 'Should not have had an error.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg = '',
+    Message := 'Should have empty error message.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.1934394675708541,
+    Actual := fbV1.x,
+    Delta := 1e-10,
+    Message := 'Vector 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.293602775485964,
+    Actual := fbV1.y,
+    Delta := 1e-10,
+    Message := 'Vector 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.572833448750751,
+    Actual := fbV1.z,
+    Delta := 1e-10,
+    Message := 'Vector 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

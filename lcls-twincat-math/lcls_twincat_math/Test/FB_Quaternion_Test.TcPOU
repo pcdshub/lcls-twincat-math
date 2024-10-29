@@ -1,0 +1,990 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_Quaternion_Test" Id="{13412c44-c354-427a-8610-863626e82d67}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION_BLOCK FB_Quaternion_Test EXTENDS FB_TestSuite
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+TestAddQuatExpectCorrectResult();
+
+TestDivQuatBy0ExpectErrorUnchanged();
+
+TestDivQuatExpectNoErrorCorrectResult();
+
+TestDivScalarBy0ExpectErrorUnchanged();
+
+TestDivScalarExpectNoErrorCorrectResult();
+
+TestEqualsQuatExpectCorrectResult();
+
+TestGetNormExpectCorrectResult();
+
+TestMakeConjExpectCorrectResult();
+
+TestMulQuatExpectCorrectResult();
+
+TestNormalizeBy0ExpectErrorUnchanged();
+
+TestNormalizeExpectCorrectResult();
+
+TestSetExpectCorrectResult();
+
+TestToStringExpectCorrectResult();
+]]></ST>
+    </Implementation>
+    <Method Name="TestAddQuatExpectCorrectResult" Id="{10fac60e-937e-4987-a61a-be50a0cdab17}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestAddQuatExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+    fbQ2 : FB_Quaternion;
+    fbQ3 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestAddQuatExpectCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+fbQ2.Set(5, 11, 14, 17);
+fbQ3.Set(2, -1, -5, 2);
+
+fbQ1.AddQuat(fbQ2);
+fbQ3.AddQuat(fbQ1);
+
+// Q1
+AssertEquals_LREAL(
+    Expected := 6.0,
+    Actual := fbQ1.w,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 13.0,
+    Actual := fbQ1.x,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 17.0,
+    Actual := fbQ1.y,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 21.0,
+    Actual := fbQ1.z,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+// Q2
+AssertEquals_LREAL(
+    Expected := 5.0,
+    Actual := fbQ2.w,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 11.0,
+    Actual := fbQ2.x,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 14.0,
+    Actual := fbQ2.y,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 17.0,
+    Actual := fbQ2.z,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [z] was not the expected value.'
+);
+
+// Q3
+AssertEquals_LREAL(
+    Expected := 8.0,
+    Actual := fbQ3.w,
+    Delta := 0.0,
+    Message := 'Quaternion 3 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 12.0,
+    Actual := fbQ3.x,
+    Delta := 0.0,
+    Message := 'Quaternion 3 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 12.0,
+    Actual := fbQ3.y,
+    Delta := 0.0,
+    Message := 'Quaternion 3 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 23.0,
+    Actual := fbQ3.z,
+    Delta := 0.0,
+    Message := 'Quaternion 3 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestDivQuatBy0ExpectErrorUnchanged" Id="{d38e7dd3-bb0c-4ccc-9a11-fbcbdd267438}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestDivQuatBy0ExpectErrorUnchanged
+VAR
+    fbQ1 : FB_Quaternion;
+    fbQ2 : FB_Quaternion;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestDivQuatBy0ExpectErrorUnchanged');
+
+fbQ1.Set(1, 2, 3, 4);
+fbQ2.Set(0, 0, 0, 0);
+
+fbQ1.DivQuat(
+    iQuat := fbQ2,
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertTrue(
+    Condition := bError,
+    Message := 'Should have had an error on division.'
+);
+
+AssertFalse(
+    Condition := sErrorMsg = '',
+    Message := 'Should not have had an empty error message on division.'
+);
+
+// Q1
+AssertEquals_LREAL(
+    Expected := 1,
+    Actual := fbQ1.w,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 2,
+    Actual := fbQ1.x,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 3,
+    Actual := fbQ1.y,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 4,
+    Actual := fbQ1.z,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+// Q2
+AssertEquals_LREAL(
+    Expected := 0,
+    Actual := fbQ2.w,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0,
+    Actual := fbQ2.x,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0,
+    Actual := fbQ2.y,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0,
+    Actual := fbQ2.z,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestDivQuatExpectNoErrorCorrectResult" Id="{1a3c588c-93ac-468f-92a3-3190cfcfa6cd}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestDivQuatExpectNoErrorCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+    fbQ2 : FB_Quaternion;
+    fbQ3 : FB_Quaternion;
+
+    bError1 : BOOL;
+    bError2 : BOOL;
+    sErrorMsg1 : T_MaxString;
+    sErrorMsg2 : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestDivQuatExpectNoErrorCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+fbQ2.Set(5, 11, 14, 17);
+fbQ3.Set(2, -1, -5, 2);
+
+fbQ1.DivQuat(
+    iQuat := fbQ2,
+    bError => bError1,
+    sErrorMsg => sErrorMsg1
+);
+
+fbQ3.DivQuat(
+    iQuat := fbQ1,
+    bError => bError2,
+    sErrorMsg => sErrorMsg2
+);
+
+AssertFalse(
+    Condition := bError1,
+    Message := 'Should not have had an error on first division.'
+);
+
+AssertFalse(
+    Condition := bError2,
+    Message := 'Should not have had an error on second division.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg1 = '',
+    Message := 'Should have empty error message on first division.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg2 = '',
+    Message := 'Should have empty error message on second division.'
+);
+
+// Q1
+AssertEquals_LREAL(
+    Expected := 0.217115689381933,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.00950871632329635,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.01743264659271,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.00316957210776545,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+// Q2
+AssertEquals_LREAL(
+    Expected := 5.0,
+    Actual := fbQ2.w,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 11.0,
+    Actual := fbQ2.x,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 14.0,
+    Actual := fbQ2.y,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 17.0,
+    Actual := fbQ2.z,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [z] was not the expected value.'
+);
+
+// Q3
+AssertEquals_LREAL(
+    Expected := 7.36666666666667,
+    Actual := fbQ3.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 3 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -4.56666666666667,
+    Actual := fbQ3.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 3 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -24.0333333333333,
+    Actual := fbQ3.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 3 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 7.9,
+    Actual := fbQ3.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 3 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestDivScalarBy0ExpectErrorUnchanged" Id="{a9d21004-9627-4f16-9588-aa868337aa66}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestDivScalarBy0ExpectErrorUnchanged
+VAR
+    fbQ1 : FB_Quaternion;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestDivScalarBy0ExpectErrorUnchanged');
+
+fbQ1.Set(1, 2, 3, 4);
+
+fbQ1.DivScalar(
+    fScalar := 0.0,
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertTrue(
+    Condition := bError,
+    Message := 'Should have had an error on the scalar division operation.'
+);
+
+AssertFalse(
+    Condition := sErrorMsg = '',
+    Message := 'Should not have had an empty error message on the scalar division operation.'
+);
+
+// Q1
+AssertEquals_LREAL(
+    Expected := 1,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 2,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 3,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 4,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestDivScalarExpectNoErrorCorrectResult" Id="{e683f9a1-772d-45eb-9328-75bd8a83e0ad}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestDivScalarExpectNoErrorCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestDivScalarExpectNoErrorCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+
+fbQ1.DivScalar(
+    fScalar := 2.0,
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertFalse(
+    Condition := bError,
+    Message := 'Should not have had an error on the scalar division operation.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg = '',
+    Message := 'Should have had an empty error message on the scalar division operation.'
+);
+
+// Q1
+AssertEquals_LREAL(
+    Expected := 0.5,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.0,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.5,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 2.0,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestEqualsQuatExpectCorrectResult" Id="{2505bc20-2169-4566-be34-7b56136e663d}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestEqualsQuatExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+    fbQ2 : FB_Quaternion;
+    fbQ3 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestEqualsQuatExpectCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+fbQ2.Set(5, 11, 14, 17);
+fbQ3.Set(1, 2, 3, 4);
+
+AssertTrue(
+    Condition := fbQ1.EqualsQuat(fbQ3),
+    Message := 'Q1 should register as equal to Q3'
+);
+
+AssertTrue(
+    Condition := fbQ3.EqualsQuat(fbQ1),
+    Message := 'Q3 should register as equal to Q1'
+);
+
+AssertFalse(
+    Condition := fbQ1.EqualsQuat(fbQ2),
+    Message := 'Q1 should not register as equal to Q2'
+);
+
+AssertFalse(
+    Condition := fbQ2.EqualsQuat(fbQ1),
+    Message := 'Q2 should not register as equal to Q1'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestGetNormExpectCorrectResult" Id="{f00e3b8a-43eb-4e50-989a-a776e375b3cc}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestGetNormExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+    fbQ2 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestGetNormExpectCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+fbQ2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+
+AssertEquals_LREAL(
+    Expected := 5.477225575051661,
+    Actual := fbQ1.GetNorm(),
+    Delta := 1e-10,
+    Message := 'Norm was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.218044907339020,
+    Actual := fbQ2.GetNorm(),
+    Delta := 1e-10,
+    Message := 'Norm was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestGetNormSqExpectCorrectResult" Id="{35ec8644-0bbc-463b-a687-0ff4219c037a}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestGetNormSqExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+    fbQ2 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestGetNormSqExpectCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+fbQ2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+
+AssertEquals_LREAL(
+    Expected := 30.0,
+    Actual := fbQ1.GetNormSq(),
+    Delta := 1e-10,
+    Message := 'Norm squared was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.047543581616482,
+    Actual := fbQ1.GetNormSq(),
+    Delta := 1e-10,
+    Message := 'Norm squared was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestMakeConjExpectCorrectResult" Id="{da00c8ae-d23b-46fb-9207-f9e324501427}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestMakeConjExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestMakeConjExpectCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+fbQ1.MakeConj();
+
+AssertEquals_LREAL(
+    Expected := 1,
+    Actual := fbQ1.w,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -2,
+    Actual := fbQ1.x,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -3,
+    Actual := fbQ1.y,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -4,
+    Actual := fbQ1.z,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestMulQuatExpectCorrectResult" Id="{a27f3213-b73d-446c-b65e-56d419b66a00}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestMulQuatExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+    fbQ2 : FB_Quaternion;
+    fbQ3 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestMulQuatExpectCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+fbQ2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+fbQ3.Set(2, -1, -5, 2);
+
+fbQ1.MulQuat(fbQ2);
+fbQ3.MulQuat(fbQ1);
+
+// Q1
+AssertEquals_LREAL(
+    Expected := 0.196513470681458,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.345483359746434,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.637083993660856,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.928684627575277,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+// Q2
+AssertEquals_LREAL(
+    Expected := 0.217115689381933,
+    Actual := fbQ2.w,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.00950871632329635,
+    Actual := fbQ2.x,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.01743264659271,
+    Actual := fbQ2.y,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.00316957210776545,
+    Actual := fbQ2.z,
+    Delta := 0.0,
+    Message := 'Quaternion 2 [z] was not the expected value.'
+);
+
+// Q3
+AssertEquals_LREAL(
+    Expected := 2.06656101426307,
+    Actual := fbQ3.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 3 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -5.42313787638669,
+    Actual := fbQ3.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 3 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 1.91125198098257,
+    Actual := fbQ3.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 3 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 3.34072900158479,
+    Actual := fbQ3.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 3 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestNormalizeBy0ExpectErrorUnchanged" Id="{ed78a481-cfdc-4a13-81fa-22a6445a248c}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestNormalizeBy0ExpectErrorUnchanged
+VAR
+    fbQ1 : FB_Quaternion;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestNormalizeBy0ExpectErrorUnchanged');
+
+fbQ1.Set(0, 0, 0, 0);
+fbQ1.Normalize(
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+AssertTrue(
+    Condition := bError,
+    Message := 'Should have had an error on normalize.'
+);
+
+AssertFalse(
+    Condition := sErrorMsg = '',
+    Message := 'Should not have empty error message on normalize.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ1.w,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ1.x,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ1.y,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0,
+    Actual := fbQ1.z,
+    Delta := 0.0,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestNormalizeExpectCorrectResult" Id="{1904d1a6-1a4a-42fa-8530-95ab8de7d437}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestNormalizeExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+
+    bError : BOOL;
+    sErrorMsg : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestNormalizeExpectCorrectResult');
+
+fbQ1.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+fbQ1.Normalize(
+    bError => bError,
+    sErrorMsg => sErrorMsg
+);
+
+
+AssertFalse(
+    Condition := bError,
+    Message := 'Should not have had an error on normalize.'
+);
+
+AssertTrue(
+    Condition := sErrorMsg = '',
+    Message := 'Should have empty error message on normalize.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.995738410181524,
+    Actual := fbQ1.w,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [w] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.043608981467804,
+    Actual := fbQ1.x,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [x] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := 0.0799497993576408,
+    Actual := fbQ1.y,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [y] was not the expected value.'
+);
+
+AssertEquals_LREAL(
+    Expected := -0.0145363271559347,
+    Actual := fbQ1.z,
+    Delta := 1e-10,
+    Message := 'Quaternion 1 [z] was not the expected value.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestSetExpectCorrectResult" Id="{919b298a-b90b-4a2a-980b-64e21cdaad46}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestSetExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+    fbQ2 : FB_Quaternion;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestSetExpectCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+
+AssertFalse(
+    Condition := fbQ1.EqualsQuat(fbQ2),
+    Message := 'Q1 should not register as equal to Q2'
+);
+
+fbQ1.Set(0, 0, 0, 0);
+
+AssertTrue(
+    Condition := fbQ1.EqualsQuat(fbQ2),
+    Message := 'Q1 should register as equal to Q2 after set operation.'
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TestToStringExpectCorrectResult" Id="{1b4d1c14-11bb-4acf-86b0-357460646718}">
+      <Declaration><![CDATA[
+METHOD PRIVATE TestToStringExpectCorrectResult
+VAR
+    fbQ1 : FB_Quaternion;
+    sExpected : T_MaxString;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+TEST('TestToStringExpectCorrectResult');
+
+fbQ1.Set(1, 2, 3, 4);
+sExpected := '1.0 + 2.0i + 3.0j + 4.0k';
+
+AssertTrue(
+    Condition := fbQ1.ToString() = sExpected,
+    Message := CONCAT('Expected string to be: [',
+               CONCAT(sExpected,
+               CONCAT('] but string was: [',
+               CONCAT(fbQ1.ToString(),
+               ']'))))
+);
+
+fbQ1.Set(-1, -2, -3, -4);
+sExpected := '-1.0 - 2.0i - 3.0j - 4.0k';
+
+AssertTrue(
+    Condition := fbQ1.ToString() = sExpected,
+    Message := CONCAT('Expected string to be: [',
+               CONCAT(sExpected,
+               CONCAT('] but string was: [',
+               CONCAT(fbQ1.ToString(),
+               ']'))))
+);
+
+fbQ1.Set(0, 0, 0, 0);
+sExpected := '0.0 + 0.0i + 0.0j + 0.0k';
+
+AssertTrue(
+    Condition := fbQ1.ToString() = sExpected,
+    Message := CONCAT('Expected string to be: [',
+               CONCAT(sExpected,
+               CONCAT('] but string was: [',
+               CONCAT(fbQ1.ToString(),
+               ']'))))
+);
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

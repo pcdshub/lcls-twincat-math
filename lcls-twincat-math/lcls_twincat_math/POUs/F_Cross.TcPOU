@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_Cross" Id="{6bf5cb7a-2815-4e3e-a35a-de27acfc5208}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_Cross : FB_Vec3
+VAR_INPUT
+    iVec3L : I_Vec3;
+    iVec3R : I_Vec3;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+F_Cross.x := (iVec3L.y * iVec3R.z) - (iVec3L.z * iVec3R.y);
+F_Cross.y := (iVec3L.z * iVec3R.x) - (iVec3L.x * iVec3R.z);
+F_Cross.z := (iVec3L.x * iVec3R.y) - (iVec3L.y * iVec3R.x);
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

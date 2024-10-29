@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_NormSqQuat" Id="{42312887-5f96-4969-87c2-7747d5e51a97}" SpecialFunc="None">
+    <Declaration><![CDATA[
+FUNCTION F_NormSqQuat : LREAL
+VAR_INPUT
+    iQuat : I_Quat;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+F_NormSqQuat := iQuat.w*iQuat.w + F_NormSqVec3(iQuat);
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
