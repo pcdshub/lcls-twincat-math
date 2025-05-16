@@ -1,0 +1,6442 @@
+
+
+DUTs
+----
+
+
+GVLs
+----
+
+
+GVL_Constants
+^^^^^^^^^^^^^
+
+::
+
+    VAR_GLOBAL CONSTANT
+        PI : LREAL := 3.14159265358979;
+    END_VAR
+
+
+
+
+POUs
+----
+
+
+F_AxisAngleQuat
+^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION F_AxisAngleQuat : FB_Quaternion
+    VAR_INPUT
+        iAxis : I_Vec3;
+        fRadians : LREAL;
+    END_VAR
+    VAR_OUTPUT
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    VAR
+        fNorm : LREAL;
+        fMultiplier : LREAL;
+    END_VAR
+    bError := FALSE;
+    sErrorMsg := '';
+
+    fNorm := F_NormVec3(iAxis);
+
+    IF fNorm = 0.0 THEN
+        bError := TRUE;
+        sErrorMsg := 'Error: cannot rotate around an axis with a norm of 0.';
+        F_AxisAngleQuat.w := 1.0;
+        F_AxisAngleQuat.x := 0.0;
+        F_AxisAngleQuat.y := 0.0;
+        F_AxisAngleQuat.z := 0.0;
+        RETURN;
+    END_IF
+
+    fMultiplier := SIN(fRadians / 2.0) / fNorm;
+
+    F_AxisAngleQuat.w := COS(fRadians / 2.0);
+    F_AxisAngleQuat.x := fMultiplier * iAxis.x;
+    F_AxisAngleQuat.y := fMultiplier * iAxis.y;
+    F_AxisAngleQuat.z := fMultiplier * iAxis.z;
+
+    END_FUNCTION
+
+
+Related:
+    * `FB_Quaternion`_
+    * `F_NormVec3`_
+
+
+F_Cross
+^^^^^^^
+
+::
+
+    FUNCTION F_Cross : FB_Vec3
+    VAR_INPUT
+        iVec3L : I_Vec3;
+        iVec3R : I_Vec3;
+    END_VAR
+    F_Cross.x := (iVec3L.y * iVec3R.z) - (iVec3L.z * iVec3R.y);
+    F_Cross.y := (iVec3L.z * iVec3R.x) - (iVec3L.x * iVec3R.z);
+    F_Cross.z := (iVec3L.x * iVec3R.y) - (iVec3L.y * iVec3R.x);
+
+    END_FUNCTION
+
+
+Related:
+    * `FB_Vec3`_
+
+
+F_Dot
+^^^^^
+
+::
+
+    FUNCTION F_Dot : LREAL
+    VAR_INPUT
+        iVec3L : I_Vec3;
+        iVec3R : I_Vec3;
+    END_VAR
+    F_Dot := (iVec3L.x * iVec3R.x) + (iVec3L.y * iVec3R.y) + (iVec3L.z * iVec3R.z);
+
+    END_FUNCTION
+
+
+
+
+F_EulerRotateVec3Frame
+^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION F_EulerRotateVec3Frame : FB_Vec3
+    VAR_INPUT
+        iVec3 : I_Vec3;
+        fAlphaRadians : LREAL; // Euler angle around first rotation axis
+        fBetaRadians : LREAL; // Euler angle around second rotation axis
+        fGammaRadians : LREAL; // Euler angle around third rotation axis
+        sOrder : STRING := 'ZYX'; // Default or invalid input = ZYX.
+        // YZY, YXY, ZYZ, ZXZ, XYX, XZX, XYZ, YZX, ZXY, XZY, ZYX, YXZ
+    END_VAR
+    VAR
+        fbQ : FB_Quaternion;
+    END_VAR
+    fbQ := F_EulerToQuat(
+        fAlphaRadians := fAlphaRadians,
+        fBetaRadians := fBetaRadians,
+        fGammaRadians := fGammaRadians,
+        sOrder := sOrder,
+        bFrame := TRUE
+    );
+
+    F_EulerRotateVec3Frame := F_QuatRotateVec3Frame(
+        iQuat := fbQ,
+        iVec3 := iVec3
+    );
+
+    END_FUNCTION
+
+
+Related:
+    * `FB_Quaternion`_
+    * `FB_Vec3`_
+    * `F_EulerToQuat`_
+    * `F_QuatRotateVec3Frame`_
+
+
+F_EulerRotateVec3Point
+^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION F_EulerRotateVec3Point : FB_Vec3
+    VAR_INPUT
+        iVec3 : I_Vec3;
+        fAlphaRadians : LREAL; // Euler angle around first rotation axis
+        fBetaRadians : LREAL; // Euler angle around second rotation axis
+        fGammaRadians : LREAL; // Euler angle around third rotation axis
+        sOrder : STRING := 'ZYX'; // Default or invalid input = ZYX.
+        // YZY, YXY, ZYZ, ZXZ, XYX, XZX, XYZ, YZX, ZXY, XZY, ZYX, YXZ
+    END_VAR
+    VAR
+        fbQ : FB_Quaternion;
+    END_VAR
+    fbQ := F_EulerToQuat(
+        fAlphaRadians := fAlphaRadians,
+        fBetaRadians := fBetaRadians,
+        fGammaRadians := fGammaRadians,
+        sOrder := sOrder,
+        bFrame := FALSE
+    );
+
+    F_EulerRotateVec3Point := F_QuatRotateVec3Point(
+        iQuat := fbQ,
+        iVec3 := iVec3
+    );
+
+    END_FUNCTION
+
+
+Related:
+    * `FB_Quaternion`_
+    * `FB_Vec3`_
+    * `F_EulerToQuat`_
+    * `F_QuatRotateVec3Point`_
+
+
+F_EulerToQuat
+^^^^^^^^^^^^^
+
+::
+
+    FUNCTION F_EulerToQuat : FB_Quaternion
+    VAR_INPUT
+        fAlphaRadians : LREAL; // Euler angle around first rotation axis
+        fBetaRadians : LREAL; // Euler angle around second rotation axis
+        fGammaRadians : LREAL; // Euler angle around third rotation axis
+        sOrder : STRING := 'ZYX'; // Default or invalid input = ZYX.
+        // YZY, YXY, ZYZ, ZXZ, XYX, XZX, XYZ, YZX, ZXY, XZY, ZYX, YXZ
+        bFrame : BOOL := TRUE; // TRUE = get quaternion to rotate frame. FALSE = get quaternion to rotate point.
+    END_VAR
+    VAR
+        fbVx : FB_Vec3;
+        fbVy : FB_Vec3;
+        fbVz : FB_Vec3;
+        fbQa : FB_Quaternion;
+        fbQb : FB_Quaternion;
+        fbQg : FB_Quaternion;
+    END_VAR
+    fbVx.Set(1.0, 0.0, 0.0);
+    fbVy.Set(0.0, 1.0, 0.0);
+    fbVz.Set(0.0, 0.0, 1.0);
+
+    IF sOrder = 'XYX' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fGammaRadians
+        );
+    ELSIF sOrder = 'XYZ' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fGammaRadians
+        );
+    ELSIF sOrder = 'XZX' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fGammaRadians
+        );
+    ELSIF sOrder = 'XZY' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fGammaRadians
+        );
+    ELSIF sOrder = 'YXY' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fGammaRadians
+        );
+    ELSIF sOrder = 'YXZ' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fGammaRadians
+        );
+    ELSIF sOrder = 'YZX' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fGammaRadians
+        );
+    ELSIF sOrder = 'YZY' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fGammaRadians
+        );
+    ELSIF sOrder = 'ZXY' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fGammaRadians
+        );
+    ELSIF sOrder = 'ZXZ' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fGammaRadians
+        );
+    ELSIF sOrder = 'ZYX' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fGammaRadians
+        );
+    ELSIF sOrder = 'ZYZ' THEN
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fGammaRadians
+        );
+    ELSE // ZYX
+        fbQa := F_AxisAngleQuat(
+            iAxis := fbVz,
+            fRadians := fAlphaRadians
+        );
+        fbQb := F_AxisAngleQuat(
+            iAxis := fbVy,
+            fRadians := fBetaRadians
+        );
+        fbQg := F_AxisAngleQuat(
+            iAxis := fbVx,
+            fRadians := fGammaRadians
+        );
+    END_IF
+
+    IF bFrame THEN
+        F_EulerToQuat := F_MulQuat(fbQb, fbQg);
+        F_EulerToQuat := F_MulQuat(fbQa, F_EulerToQuat);
+    ELSE
+        F_EulerToQuat := F_MulQuat(fbQb, fbQa);
+        F_EulerToQuat := F_MulQuat(fbQg, F_EulerToQuat);
+    END_IF
+
+    END_FUNCTION
+
+
+Related:
+    * `FB_Quaternion`_
+    * `FB_Vec3`_
+    * `F_AxisAngleQuat`_
+    * `F_MulQuat`_
+
+
+F_MulQuat
+^^^^^^^^^
+
+::
+
+    FUNCTION F_MulQuat : FB_Quaternion
+    VAR_INPUT
+        iQuatL	: I_Quat;
+        iQuatR	: I_Quat;
+    END_VAR
+    F_MulQuat.w := (iQuatL.w * iQuatR.w) - (iQuatL.x * iQuatR.x) - (iQuatL.y * iQuatR.y) - (iQuatL.z * iQuatR.z);
+    F_MulQuat.x := (iQuatL.w * iQuatR.x) + (iQuatL.x * iQuatR.w) + (iQuatL.y * iQuatR.z) - (iQuatL.z * iQuatR.y);
+    F_MulQuat.y := (iQuatL.w * iQuatR.y) - (iQuatL.x * iQuatR.z) + (iQuatL.y * iQuatR.w) + (iQuatL.z * iQuatR.x);
+    F_MulQuat.z := (iQuatL.w * iQuatR.z) + (iQuatL.x * iQuatR.y) - (iQuatL.y * iQuatR.x) + (iQuatL.z * iQuatR.w);
+
+    END_FUNCTION
+
+
+Related:
+    * `FB_Quaternion`_
+
+
+F_NormalizedQuat
+^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION F_NormalizedQuat : FB_Quaternion
+    VAR_INPUT
+        iQuat : I_Quat;
+    END_VAR
+    VAR_OUTPUT
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    VAR
+        fNorm : LREAL;
+    END_VAR
+    bError := FALSE;
+    sErrorMsg := '';
+
+    fNorm := F_NormQuat(iQuat);
+
+    IF fNorm = 0.0 THEN
+        bError := TRUE;
+        sErrorMsg := 'Error: cannot normalize a quaternion with a norm of 0.';
+        F_NormalizedQuat.w := iQuat.w;
+        F_NormalizedQuat.x := iQuat.x;
+        F_NormalizedQuat.y := iQuat.y;
+        F_NormalizedQuat.z := iQuat.z;
+        RETURN;
+    END_IF
+
+    F_NormalizedQuat.w := iQuat.w / fNorm;
+    F_NormalizedQuat.x := iQuat.x / fNorm;
+    F_NormalizedQuat.y := iQuat.y / fNorm;
+    F_NormalizedQuat.z := iQuat.z / fNorm;
+
+    END_FUNCTION
+
+
+Related:
+    * `FB_Quaternion`_
+    * `F_NormQuat`_
+
+
+F_NormalizedVec3
+^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION F_NormalizedVec3 : FB_Vec3
+    VAR_INPUT
+        iVec3 : I_Vec3;
+    END_VAR
+    VAR_OUTPUT
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    VAR
+        fNorm : LREAL;
+    END_VAR
+    bError := FALSE;
+    sErrorMsg := '';
+
+    fNorm := F_NormVec3(iVec3);
+
+    IF fNorm = 0.0 THEN
+        bError := TRUE;
+        sErrorMsg := 'Error: cannot normalize a vector with a norm of 0.';
+        F_NormalizedVec3.x := iVec3.x;
+        F_NormalizedVec3.y := iVec3.y;
+        F_NormalizedVec3.z := iVec3.z;
+        RETURN;
+    END_IF
+
+    F_NormalizedVec3.x := iVec3.x / fNorm;
+    F_NormalizedVec3.y := iVec3.y / fNorm;
+    F_NormalizedVec3.z := iVec3.z / fNorm;
+
+    END_FUNCTION
+
+
+Related:
+    * `FB_Vec3`_
+    * `F_NormVec3`_
+
+
+F_NormQuat
+^^^^^^^^^^
+
+::
+
+    FUNCTION F_NormQuat : LREAL
+    VAR_INPUT
+        iQuat : I_Quat;
+    END_VAR
+    F_NormQuat := SQRT(F_NormSqQuat(iQuat));
+
+    END_FUNCTION
+
+
+Related:
+    * `F_NormSqQuat`_
+
+
+F_NormSqQuat
+^^^^^^^^^^^^
+
+::
+
+    FUNCTION F_NormSqQuat : LREAL
+    VAR_INPUT
+        iQuat : I_Quat;
+    END_VAR
+    F_NormSqQuat := iQuat.w*iQuat.w + F_NormSqVec3(iQuat);
+
+    END_FUNCTION
+
+
+Related:
+    * `F_NormSqVec3`_
+
+
+F_NormSqVec3
+^^^^^^^^^^^^
+
+::
+
+    FUNCTION F_NormSqVec3 : LREAL
+    VAR_INPUT
+        iVec3 : I_Vec3;
+    END_VAR
+    F_NormSqVec3 := iVec3.x*iVec3.x + iVec3.y*iVec3.y + iVec3.z*iVec3.z;
+
+    END_FUNCTION
+
+
+
+
+F_NormVec3
+^^^^^^^^^^
+
+::
+
+    FUNCTION F_NormVec3 : LREAL
+    VAR_INPUT
+        iVec3 : I_Vec3;
+    END_VAR
+    F_NormVec3 := SQRT(F_NormSqVec3(iVec3));
+
+    END_FUNCTION
+
+
+Related:
+    * `F_NormSqVec3`_
+
+
+F_QuatRotateVec3Frame
+^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION F_QuatRotateVec3Frame : FB_Vec3
+    VAR_INPUT
+        iQuat : I_Quat;
+        iVec3 : I_Vec3;
+    END_VAR
+    VAR_OUTPUT
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    VAR
+        fbQ : FB_Quaternion;
+        fbV : FB_Vec3;
+        fbQc : FB_Quaternion;
+        fbQv : FB_Quaternion;
+    END_VAR
+    bError := FALSE;
+    sErrorMsg := '';
+
+    fbQ.Set(iQuat.w, iQuat.x, iQuat.y, iQuat.z);
+
+    IF fbQ.GetNorm() = 0.0 THEN
+        bError := TRUE;
+        sErrorMsg := 'Error: cannot rotate a vector using a quaternion with a norm of 0.';
+        F_QuatRotateVec3Frame.Set(iVec3.x, iVec3.y, iVec3.z);
+        RETURN;
+    END_IF
+
+    fbQ.Normalize();
+
+    fbV.Set(iVec3.x, iVec3.y, iVec3.z);
+
+    fbQc := fbQ;
+    fbQc.MakeConj();
+
+    fbQv := F_MulQuat(fbV, fbQ);
+    fbQv := F_MulQuat(fbQc, fbQv);
+
+    F_QuatRotateVec3Frame.Set(fbQv.x, fbQv.y, fbQv.z);
+
+    END_FUNCTION
+
+
+Related:
+    * `FB_Quaternion`_
+    * `FB_Vec3`_
+    * `F_MulQuat`_
+
+
+F_QuatRotateVec3Point
+^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION F_QuatRotateVec3Point : FB_Vec3
+    VAR_INPUT
+        iQuat : I_Quat;
+        iVec3 : I_Vec3;
+    END_VAR
+    VAR_OUTPUT
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    VAR
+        fbQ : FB_Quaternion;
+        fbV : FB_Vec3;
+        fbQc : FB_Quaternion;
+        fbQv : FB_Quaternion;
+    END_VAR
+    bError := FALSE;
+    sErrorMsg := '';
+
+    fbQ.Set(iQuat.w, iQuat.x, iQuat.y, iQuat.z);
+
+    IF fbQ.GetNorm() = 0.0 THEN
+        bError := TRUE;
+        sErrorMsg := 'Error: cannot rotate a vector using a quaternion with a norm of 0.';
+        F_QuatRotateVec3Point.Set(iVec3.x, iVec3.y, iVec3.z);
+        RETURN;
+    END_IF
+
+    fbQ.Normalize();
+
+    fbV.Set(iVec3.x, iVec3.y, iVec3.z);
+
+    fbQc := fbQ;
+    fbQc.MakeConj();
+
+    fbQv := F_MulQuat(fbQ, fbV);
+    fbQv := F_MulQuat(fbQv, fbQc);
+
+    F_QuatRotateVec3Point.Set(fbQv.x, fbQv.y, fbQv.z);
+
+    END_FUNCTION
+
+
+Related:
+    * `FB_Quaternion`_
+    * `FB_Vec3`_
+    * `F_MulQuat`_
+
+
+FB_AxisAngleQuat_Test
+^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_AxisAngleQuat_Test EXTENDS FB_TestSuite
+    TestInputRadians0AxisExpectErrorIdentityQuat();
+
+    TestInputRadiansAxisExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestInputRadians0AxisExpectErrorIdentityQuat
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestInputRadians0AxisExpectErrorIdentityQuat');
+
+    fbV1.Set(0, 0, 0);
+    fbQ1 := F_AxisAngleQuat(
+        fRadians := GVL_Constants.PI / 3.0,
+        iAxis := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertTrue(
+        Condition := bError,
+        Message := 'Should have had an error.'
+    );
+
+    AssertFalse(
+        Condition := sErrorMsg = '',
+        Message := 'Should not have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.0,
+        Actual := fbQ1.w,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ1.x,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ1.y,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ1.z,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestInputRadiansAxisExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+        fbQ3 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+        fbV3 : FB_Vec3;
+
+        bError1 : BOOL;
+        bError2 : BOOL;
+        bError3 : BOOL;
+        sErrorMsg1 : T_MaxString;
+        sErrorMsg2 : T_MaxString;
+        sErrorMsg3 : T_MaxString;
+    END_VAR
+    TEST('TestInputRadiansAxisExpectCorrectResult');
+
+    fbV1.Set(0.3, 1.6, 2.43);
+    fbQ1 := F_AxisAngleQuat(
+        fRadians := -GVL_Constants.PI / 3.0,
+        iAxis := fbV1,
+        bError => bError1,
+        sErrorMsg => sErrorMsg1
+    );
+
+    fbV2.Set(0.537667139546100, 1.833885014595086, -2.258846861003648);
+    fbQ2 := F_AxisAngleQuat(
+        fRadians := 0.862173320368121,
+        iAxis := fbV2,
+        bError => bError2,
+        sErrorMsg => sErrorMsg2
+    );
+
+    fbV3.Set(0.537667139546100, 1.833885014595086, -2.258846861003648);
+    fbQ3 := F_AxisAngleQuat(
+        fRadians := 0.0,
+        iAxis := fbV3,
+        bError => bError3,
+        sErrorMsg => sErrorMsg3
+    );
+
+    AssertFalse(
+        Condition := bError1,
+        Message := 'Should not have had an error on first call.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg1 = '',
+        Message := 'Should have empty error message on first call.'
+    );
+
+    AssertFalse(
+        Condition := bError2,
+        Message := 'Should not have had an error on second call.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg2 = '',
+        Message := 'Should have empty error message on second call.'
+    );
+
+    AssertFalse(
+        Condition := bError3,
+        Message := 'Should not have had an error on third call.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg3 = '',
+        Message := 'Should have empty error message on third call.'
+    );
+
+    // Q1
+    AssertEquals_LREAL(
+        Expected := 0.866025403784439,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.051284224229690,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.273515862558345,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.415402216260486,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    // Q2
+    AssertEquals_LREAL(
+        Expected := 0.908512216194018,
+        Actual := fbQ2.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 2 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.075931876866402,
+        Actual := fbQ2.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 2 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.258989848687666,
+        Actual := fbQ2.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 2 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.319004955100260,
+        Actual := fbQ2.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 2 [z] was not the expected value.'
+    );
+
+    // Q3
+    AssertEquals_LREAL(
+        Expected := 1.0,
+        Actual := fbQ3.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ3.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ3.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ3.z,
+        Delta := 1e-10,
+        Message := 'Quaternion3 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Quaternion`_
+    * `FB_Vec3`_
+    * `F_AxisAngleQuat`_
+    * `GVL_Constants`_
+
+
+FB_Cross_Test
+^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_Cross_Test EXTENDS FB_TestSuite
+    TestInputVec3ExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestInputVec3ExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+        fbV3 : FB_Vec3;
+    END_VAR
+    TEST('TestInputVec3ExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+    fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+    fbV3.Set(2, -1, -5);
+
+    fbV1 := F_Cross(fbV1, fbV2);
+    fbV3 := F_Cross(fbV3, fbV1);
+
+    // V1
+    AssertEquals_LREAL(
+        Expected := 0.063391442155309,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.633914421553089,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.443740095087162,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    // V2
+    AssertEquals_LREAL(
+        Expected := 0.217115689381933,
+        Actual := fbV2.x,
+        Delta := 0.0,
+        Message := 'Vector 2 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.00950871632329635,
+        Actual := fbV2.y,
+        Delta := 0.0,
+        Message := 'Vector 2 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.01743264659271,
+        Actual := fbV2.z,
+        Delta := 0.0,
+        Message := 'Vector 2 [z] was not the expected value.'
+    );
+
+    // V3
+    AssertEquals_LREAL(
+        Expected := 3.613312202852607,
+        Actual := fbV3.x,
+        Delta := 1e-10,
+        Message := 'Vector 3 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.570522979397780,
+        Actual := fbV3.y,
+        Delta := 1e-10,
+        Message := 'Vector 3 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.331220285261487,
+        Actual := fbV3.z,
+        Delta := 1e-10,
+        Message := 'Vector 3 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Vec3`_
+    * `F_Cross`_
+
+
+FB_Dot_Test
+^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_Dot_Test EXTENDS FB_TestSuite
+    TestInputVec3ExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestInputVec3ExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+        fbV3 : FB_Vec3;
+    END_VAR
+    TEST('TestInputVec3ExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+    fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+    fbV3.Set(43, 12, 856);
+
+    AssertEquals_LREAL(
+        Expected := 0.250396196513470,
+        Actual := F_Dot(fbV1, fbV2),
+        Delta := 1e-10,
+        Message := 'Dot product was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 24.144215530903324,
+        Actual := F_Dot(fbV2, fbV3),
+        Delta := 1e-10,
+        Message := 'Dot product was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Vec3`_
+    * `F_Dot`_
+
+
+FB_EulerRotateVec3Frame_Test
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_EulerRotateVec3Frame_Test EXTENDS FB_TestSuite
+    TestRandInputOrderXYXExpectCorrectResult();
+
+    TestRandInputOrderXYZExpectCorrectResult();
+
+    TestRandInputOrderXZXExpectCorrectResult();
+
+    TestRandInputOrderXZYExpectCorrectResult();
+
+    TestRandInputOrderYXYExpectCorrectResult();
+
+    TestRandInputOrderYXZExpectCorrectResult();
+
+    TestRandInputOrderYZXExpectCorrectResult();
+
+    TestRandInputOrderYZYExpectCorrectResult();
+
+    TestRandInputOrderZXYExpectCorrectResult();
+
+    TestRandInputOrderZXZExpectCorrectResult();
+
+    TestRandInputOrderZYXExpectCorrectResult();
+
+    TestRandInputOrderZYZExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestRandInputOrderXYXExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderXYXExpectCorrectResult');
+
+    fbV1.Set(-2.021958930051790, -0.982131525779048, 0.612511298166949);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.322471807186779,
+        fBetaRadians := 0.784739294760742,
+        fGammaRadians := 0.471357153710612,
+        sOrder := 'XYX',
+    );
+
+    AssertEquals_LREAL(
+        Expected := -2.061139365755713,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -1.019130701155565,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.375695978181459,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXYZExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderXYZExpectCorrectResult');
+
+    fbV1.Set(0.199189444075264, -1.521026561768955, -0.723631125289073);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.242849598318169,
+        fBetaRadians := 0.917424342049382,
+        fGammaRadians := 0.269061586686018,
+        sOrder := 'XYZ',
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.064312669898517,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -1.694268277767355,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.046466387492415,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXZXExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderXZXExpectCorrectResult');
+
+    fbV1.Set(0.249517740562795, -0.993019006549601, 0.974950224811312);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.473485992965320,
+        fBetaRadians := 0.152721200438232,
+        fGammaRadians := 0.341124607049109,
+        sOrder := 'XZX',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.179798511595315,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.003079956237309,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.402332628224000,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXZYExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderXZYExpectCorrectResult');
+
+    fbV1.Set(-0.307503469862751, -0.131820352915894, 0.595357673884102);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.236230576993797,
+        fBetaRadians := 0.119396247797306,
+        fGammaRadians := 0.607303940685635,
+        sOrder := 'XZY',
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.597541393105688,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.047725946588189,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.327188427088682,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYXYExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderYXYExpectCorrectResult');
+
+    fbV1.Set(0.593930795648753, -2.186021612748235, -1.327043149520291);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.676122303863752,
+        fBetaRadians := 0.289064571674477,
+        fGammaRadians := 0.671808165414215,
+        sOrder := 'YXY',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.020522330355508,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -2.284441460148486,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.795203867263931,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYXZExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderYXZExpectCorrectResult');
+
+    fbV1.Set(0.092307951238962, 1.729841391572364, -0.608557444738319);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.256440992229147,
+        fBetaRadians := 0.613460736812875,
+        fGammaRadians := 0.582249164527227,
+        sOrder := 'YXZ',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.802349778436683,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.775592528782256,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -1.458048429835282,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYZXExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderYZXExpectCorrectResult');
+
+    fbV1.Set(0.300485967595730, -0.373070658631004, 0.815488508092498);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.091113463686535,
+        fBetaRadians := 0.576209380663007,
+        fGammaRadians := 0.683363243294653,
+        sOrder := 'YZX',
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.014563309572440,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.192362554518954,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.925893945070105,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYZYExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderYZYExpectCorrectResult');
+
+    fbV1.Set(0.312023828329274, 1.804493771724187, -0.723121479570418);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.875371598604185,
+        fBetaRadians := 0.518052108361104,
+        fGammaRadians := 0.943622624548388,
+        sOrder := 'YZY',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.090560751359501,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.193792538056564,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.123386816518432,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZXYExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderZXYExpectCorrectResult');
+
+    fbV1.Set(0.412796010311392, -0.986961883351522, 0.759568325914783);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.647617630172684,
+        fBetaRadians := 0.679016754093202,
+        fGammaRadians := 0.635786710514084,
+        sOrder := 'ZXY',
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.951602112563449,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.329299698220112,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.841102535466216,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZXZExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderZXZExpectCorrectResult');
+
+    fbV1.Set(1.516266896645953, -0.032566509194481, 1.635999657278292);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.006715314318477,
+        fBetaRadians := 0.602170487581795,
+        fGammaRadians := 0.386771194520985,
+        sOrder := 'ZXZ',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.740285496415775,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.253763748205014,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.372454410558687,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZYXExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderZYXExpectCorrectResult');
+
+    fbV1.Set(-0.238301504589733, 0.229596893220314, 0.439997904822629);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.770285514803660,
+        fBetaRadians := 0.350218013441105,
+        fGammaRadians := 0.662009598359135,
+        sOrder := 'ZYX',
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.161441613986054,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.512558476646013,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.119670004622508,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZYZExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderZYZExpectCorrectResult');
+
+    fbV1.Set(-0.326814228785906, 0.812323004640796, 0.545540103526116);
+    fbV1 := F_EulerRotateVec3Frame(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.224040030824219,
+        fBetaRadians := 0.667832727013717,
+        fGammaRadians := 0.844392156527205,
+        sOrder := 'ZYZ',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.349920881984102,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.907939120979554,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.342771261203743,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Vec3`_
+    * `F_EulerRotateVec3Frame`_
+
+
+FB_EulerRotateVec3Point_Test
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_EulerRotateVec3Point_Test EXTENDS FB_TestSuite
+    TestRandInputOrderXYXExpectCorrectResult();
+
+    TestRandInputOrderXYZExpectCorrectResult();
+
+    TestRandInputOrderXZXExpectCorrectResult();
+
+    TestRandInputOrderXZYExpectCorrectResult();
+
+    TestRandInputOrderYXYExpectCorrectResult();
+
+    TestRandInputOrderYXZExpectCorrectResult();
+
+    TestRandInputOrderYZXExpectCorrectResult();
+
+    TestRandInputOrderYZYExpectCorrectResult();
+
+    TestRandInputOrderZXYExpectCorrectResult();
+
+    TestRandInputOrderZXZExpectCorrectResult();
+
+    TestRandInputOrderZYXExpectCorrectResult();
+
+    TestRandInputOrderZYZExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestRandInputOrderXYXExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderXYXExpectCorrectResult');
+
+    fbV1.Set(0.883969890234671, 0.180257693987047, 0.550854522057470);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.850712674289007,
+        fBetaRadians := 0.560559527354885,
+        fGammaRadians := 0.929608866756663,
+        sOrder := 'XYX',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.013860508751984,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.138499414523806,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.265030353967083,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXYZExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderXYZExpectCorrectResult');
+
+    fbV1.Set(-0.509711712767427, -0.002854960144321, 0.919867079806395);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.527680069338442,
+        fBetaRadians := 0.479523385210219,
+        fGammaRadians := 0.801347605521952,
+        sOrder := 'XYZ',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.274480771081401,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.385905454582859,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.938992498303917,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXZXExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderXZXExpectCorrectResult');
+
+    fbV1.Set(1.009367118930138, 0.475860587278343, 1.412232686444504);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.879013904597178,
+        fBetaRadians := 0.988911616079589,
+        fGammaRadians := 0.000522375356945,
+        sOrder := 'XZX',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.209738589611537,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.411695806927764,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.267558893040976,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXZYExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderXZYExpectCorrectResult');
+
+    fbV1.Set(0.425485355625296, -1.314723503486884, -0.416411219699434);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.769029085335896,
+        fBetaRadians := 0.581446487875398,
+        fGammaRadians := 0.928313062314188,
+        sOrder := 'XZY',
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.542913654351241,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.313801252632827,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -1.299887502874395,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYXYExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderYXYExpectCorrectResult');
+
+    fbV1.Set(-0.333407067263733, 0.713543302564059, 0.317407733234497);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.588026055308497,
+        fBetaRadians := 0.154752348656045,
+        fGammaRadians := 0.199862822857452,
+        sOrder := 'YXY',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.010602960235293,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.635802912518845,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.562755915046028,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYXZExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderYXZExpectCorrectResult');
+
+    fbV1.Set(-0.939534765941492, -0.037533188819172, -1.896304493622450);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.031991015762567,
+        fBetaRadians := 0.614713419117141,
+        fGammaRadians := 0.362411462273053,
+        sOrder := 'YXZ',
+    );
+
+    AssertEquals_LREAL(
+        Expected := -1.305288416467097,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.622780711683906,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -1.545468014615531,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYZXExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderYZXExpectCorrectResult');
+
+    fbV1.Set(0.291570288770806, -0.777698538311603, 0.566696097539305);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.574661219130188,
+        fBetaRadians := 0.845178185054037,
+        fGammaRadians := 0.738640291995402,
+        sOrder := 'YZX',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.948601865784525,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.289389859639868,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.165471224446754,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYZYExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderYZYExpectCorrectResult');
+
+    fbV1.Set(1.457967780661986, 0.047471323274829, 1.746256710118421);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.768854252429615,
+        fBetaRadians := 0.167253545494722,
+        fGammaRadians := 0.861980478702072,
+        sOrder := 'YZY',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.629937737370264,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.423382742029008,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -1.530158847853325,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZXYExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderZXYExpectCorrectResult');
+
+    fbV1.Set(0.213041698417000, 0.879677164233489, 2.038876251414042);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.083482813602623,
+        fBetaRadians := 0.625959785171583,
+        fGammaRadians := 0.660944557947342,
+        sOrder := 'ZXY',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.445637304366234,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.469722189107750,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.632706004277255,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZXZExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderZXZExpectCorrectResult');
+
+    fbV1.Set(-0.009524916098166, -0.689810537631710, -0.666699153601164);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.678652304800188,
+        fBetaRadians := 0.495177019089661,
+        fGammaRadians := 0.189710406017580,
+        sOrder := 'ZXZ',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.448319609389592,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.077772176786697,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.844617120132878,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZYXExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderZYXExpectCorrectResult');
+
+    fbV1.Set(-1.006500074619336, 0.064516742311104, 0.600291949185784);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.862710718699670,
+        fBetaRadians := 0.484296511212102,
+        fGammaRadians := 0.844855674576263,
+        sOrder := 'ZYX',
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.343214386530040,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -1.121995916448222,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.029736893865281,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZYZExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+    END_VAR
+    TEST('TestRandInputOrderZYZExpectCorrectResult');
+
+    fbV1.Set(-1.638665729933887, -0.760089998635267, -0.818793096250257);
+    fbV1 := F_EulerRotateVec3Point(
+        iVec3 := fbV1,
+        fAlphaRadians := 0.789963029944531,
+        fBetaRadians := 0.318524245398992,
+        fGammaRadians := 0.534064127370726,
+        sOrder := 'ZYZ',
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.142635838278066,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -1.889511039302811,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.585480456500237,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Vec3`_
+    * `F_EulerRotateVec3Point`_
+
+
+FB_EulerToQuat_Test
+^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_EulerToQuat_Test EXTENDS FB_TestSuite
+    TestRandInputOrderXYXFrameExpectCorrectResult();
+
+    TestRandInputOrderXYXPointExpectCorrectResult();
+
+    TestRandInputOrderXYZFrameExpectCorrectResult();
+
+    TestRandInputOrderXYZPointExpectCorrectResult();
+
+    TestRandInputOrderXZXFrameExpectCorrectResult();
+
+    TestRandInputOrderXZXPointExpectCorrectResult();
+
+    TestRandInputOrderXZYFrameExpectCorrectResult();
+
+    TestRandInputOrderXZYPointExpectCorrectResult();
+
+    TestRandInputOrderYXYFrameExpectCorrectResult();
+
+    TestRandInputOrderYXYPointExpectCorrectResult();
+
+    TestRandInputOrderYXZFrameExpectCorrectResult();
+
+    TestRandInputOrderYXZPointExpectCorrectResult();
+
+    TestRandInputOrderYZXFrameExpectCorrectResult();
+
+    TestRandInputOrderYZXPointExpectCorrectResult();
+
+    TestRandInputOrderYZYFrameExpectCorrectResult();
+
+    TestRandInputOrderYZYPointExpectCorrectResult();
+
+    TestRandInputOrderZXYFrameExpectCorrectResult();
+
+    TestRandInputOrderZXYPointExpectCorrectResult();
+
+    TestRandInputOrderZXZFrameExpectCorrectResult();
+
+    TestRandInputOrderZXZPointExpectCorrectResult();
+
+    TestRandInputOrderZYXFrameExpectCorrectResult();
+
+    TestRandInputOrderZYXPointExpectCorrectResult();
+
+    TestRandInputOrderZYZFrameExpectCorrectResult();
+
+    TestRandInputOrderZYZPointExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestRandInputOrderXYXFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderXYXFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.119214541054191,
+        fBetaRadians := 0.939829470344921,
+        fGammaRadians := 0.645551874972524,
+        sOrder := 'XYX',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.827213283190194,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.332687614201764,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.437220244802662,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.117794707033628,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXYXPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderXYXPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.798960278812879,
+        fBetaRadians := 0.734341083695970,
+        fGammaRadians := 0.051331886112371,
+        sOrder := 'XYX',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.850258847901497,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.384962489257288,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.334185588573854,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.131086863642391,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXYZFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderXYZFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.647311480293128,
+        fBetaRadians := 0.543885933999639,
+        fGammaRadians := 0.721046620579811,
+        sOrder := 'XYZ',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.824393119618149,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.376486704391404,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.130217834572788,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.402090861997547,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXYZPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderXYZPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.943008139570703,
+        fBetaRadians := 0.683715572408358,
+        fGammaRadians := 0.132082955713563,
+        sOrder := 'XYZ',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.847553031313486,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.407299809816023,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.326249172525653,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.096551548208610,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXZXFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderXZXFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.479463224948888,
+        fBetaRadians := 0.639316961040108,
+        fGammaRadians := 0.544716110526763,
+        sOrder := 'XZX',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.827563449078756,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.465177898226948,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.010250791515732,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.314075121624324,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXZXPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderXZXPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.072885299098976,
+        fBetaRadians := 0.088527459674720,
+        fGammaRadians := 0.798350864113952,
+        sOrder := 'XZX',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.905721398247271,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.421557528972582,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.015700993875632,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.041370005013976,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXZYFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderXZYFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.404579995857626,
+        fBetaRadians := 0.448372912066495,
+        fGammaRadians := 0.365816176838171,
+        sOrder := 'XZY',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.947286828124650,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.153005782173851,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.129801496877097,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.249776834977489,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderXZYPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderXZYPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.749131463103519,
+        fBetaRadians := 0.583185731454876,
+        fGammaRadians := 0.740032327987778,
+        sOrder := 'XZY',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.793017227753245,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.423460819859790,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.420411214477314,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.122715203915174,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYXYFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderYXYFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.841929152691309,
+        fBetaRadians := 0.832916819075216,
+        fGammaRadians := 0.256440992229147,
+        sOrder := 'YXY',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.780046262173955,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.387313876836655,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.477376234063598,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.116737829470396,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYXYPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderYXYPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.780175531491174,
+        fBetaRadians := 0.337583864052045,
+        fGammaRadians := 0.607865907262946,
+        sOrder := 'YXY',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.757756295545279,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.167368486603411,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.630542804357751,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.014455383988052,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYXZFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderYXZFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.932853570278820,
+        fBetaRadians := 0.972740854003014,
+        fGammaRadians := 0.192028349427775,
+        sOrder := 'YXZ',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.806117529539960,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.453679653118559,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.355694027916462,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.133532990003141,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYXZPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderYXZPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.866930291751916,
+        fBetaRadians := 0.086234529863496,
+        fGammaRadians := 0.366436616319199,
+        sOrder := 'YXZ',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.888198299305905,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.037991292068212,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.419731083626482,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.182992514258983,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYZXFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderYZXFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.522495305777102,
+        fBetaRadians := 0.993704624120852,
+        fGammaRadians := 0.218676632399634,
+        sOrder := 'YZX',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.830752828301988,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.215051263380013,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.275948754905312,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.432960710749967,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYZXPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderYZXPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.722724539656766,
+        fBetaRadians := 0.110353480642349,
+        fGammaRadians := 0.117492852151833,
+        sOrder := 'YZX',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.933526058516332,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.035373025787237,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.349373021050654,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.072224229172457,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYZYFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderYZYFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.350218013441105,
+        fBetaRadians := 0.662009598359135,
+        fGammaRadians := 0.416158589969796,
+        sOrder := 'YZY',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.877130381214949,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.010713186449320,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.353583870687606,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.324816822802316,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderYZYPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderYZYPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.556669834964013,
+        fBetaRadians := 0.396520792581593,
+        fGammaRadians := 0.061590667053965,
+        sOrder := 'YZY',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.933937796220430,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.048260003861111,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.298270572948459,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.190960284172521,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZXYFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderZXYFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.105798273250228,
+        fBetaRadians := 0.109697464523194,
+        fGammaRadians := 0.063591370975106,
+        sOrder := 'ZXY',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.996503332840651,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.053038510576807,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.034595297716914,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.054508617751202,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZXYPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderZXYPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.640717922965926,
+        fBetaRadians := 0.328814214756803,
+        fGammaRadians := 0.653812022595774,
+        sOrder := 'ZXY',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.903286974576468,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.246871402821694,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.251856640945832,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.244326389161757,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZXZFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderZXZFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.869941032358007,
+        fBetaRadians := 0.264779026475630,
+        fGammaRadians := 0.318074075481059,
+        sOrder := 'ZXZ',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.821452622922216,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.127009613457024,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.035963619440219,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.554788936858394,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZXZPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderZXZPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.549540107015198,
+        fBetaRadians := 0.485229408584959,
+        fGammaRadians := 0.890475679184438,
+        sOrder := 'ZXZ',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.729782642647554,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.236759395391620,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.040755390794522,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.640079121129047,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZYXFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderZYXFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.763504640848813,
+        fBetaRadians := 0.627896379614169,
+        fGammaRadians := 0.771980385554245,
+        sOrder := 'ZYX',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.861026411705370,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.225714405773896,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.398900238099248,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.220374965493531,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZYXPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderZYXPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.234826914747904,
+        fBetaRadians := 0.734957541696052,
+        fGammaRadians := 0.970598525086614,
+        sOrder := 'ZYX',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.800165116206764,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.469558407591350,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.264597310798463,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.263132954576793,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZYZFrameExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderZYZFrameExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.613460736812875,
+        fBetaRadians := 0.582249164527227,
+        fGammaRadians := 0.540739337124410,
+        sOrder := 'ZYZ',
+        bFrame := TRUE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.802784722480366,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.010434300055502,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.286839947995462,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.522638172131002,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputOrderZYZPointExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestOrderZYZPointExpectCorrectResult');
+
+    fbQ1 := F_EulerToQuat(
+        fAlphaRadians := 0.741254049502218,
+        fBetaRadians := 0.104813241973500,
+        fGammaRadians := 0.127888379782995,
+        sOrder := 'ZYZ',
+        bFrame := FALSE
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.905805352175926,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.015814208515679,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.049938475311539,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.420443484266349,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Quaternion`_
+    * `F_EulerToQuat`_
+
+
+FB_MulQuat_Test
+^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_MulQuat_Test EXTENDS FB_TestSuite
+    TestInputVec4ExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestInputVec4ExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+        fbQ3 : FB_Quaternion;
+    END_VAR
+    TEST('TestInputVec4ExpectCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+    fbQ2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+    fbQ3.Set(2, -1, -5, 2);
+
+    fbQ1 := F_MulQuat(fbQ1, fbQ2);
+    fbQ3 := F_MulQuat(fbQ3, fbQ1);
+
+    // Q1
+    AssertEquals_LREAL(
+        Expected := 0.196513470681458,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.345483359746434,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.637083993660856,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.928684627575277,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    // Q2
+    AssertEquals_LREAL(
+        Expected := 0.217115689381933,
+        Actual := fbQ2.w,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.00950871632329635,
+        Actual := fbQ2.x,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.01743264659271,
+        Actual := fbQ2.y,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.00316957210776545,
+        Actual := fbQ2.z,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [z] was not the expected value.'
+    );
+
+    // Q3
+    AssertEquals_LREAL(
+        Expected := 2.06656101426307,
+        Actual := fbQ3.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -5.42313787638669,
+        Actual := fbQ3.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.91125198098257,
+        Actual := fbQ3.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 3.34072900158479,
+        Actual := fbQ3.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Quaternion`_
+    * `F_MulQuat`_
+
+
+FB_NormalizedQuat_Test
+^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_NormalizedQuat_Test EXTENDS FB_TestSuite
+    TestInputVec4ExpectCorrectResult();
+
+    TestNormalizeBy0ExpectErrorUnchanged();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestInputVec4ExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestInputVec4ExpectCorrectResult');
+
+    fbQ1.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+    fbQ1 := F_NormalizedQuat(
+        iQuat := fbQ1,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error on normalize.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message on normalize.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.995738410181524,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.043608981467804,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0799497993576408,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.0145363271559347,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestNormalizeBy0ExpectErrorUnchanged
+    VAR
+        fbQ1 : FB_Quaternion;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestNormalizeBy0ExpectErrorUnchanged');
+
+    fbQ1.Set(0, 0, 0, 0);
+    fbQ1 := F_NormalizedQuat(
+        iQuat := fbQ1,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertTrue(
+        Condition := bError,
+        Message := 'Should have had an error on normalize.'
+    );
+
+    AssertFalse(
+        Condition := sErrorMsg = '',
+        Message := 'Should not have empty error message on normalize.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ1.w,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ1.x,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ1.y,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ1.z,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Quaternion`_
+    * `F_NormalizedQuat`_
+
+
+FB_NormalizedVec3_Test
+^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_NormalizedVec3_Test EXTENDS FB_TestSuite
+    TestInputVec3ExpectCorrectResult();
+
+    TestNormalizeBy0ExpectErrorUnchanged();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestInputVec3ExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestInputVec3ExpectCorrectResult');
+
+    fbV1.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+    fbV1 := F_NormalizedVec3(
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error on normalize.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message on normalize.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.995843629013136,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.043613589591816,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.079958247584997,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestNormalizeBy0ExpectErrorUnchanged
+    VAR
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestNormalizeBy0ExpectErrorUnchanged');
+
+    fbV1.Set(0, 0, 0);
+    fbV1 := F_NormalizedVec3(
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertTrue(
+        Condition := bError,
+        Message := 'Should have had an error on normalize.'
+    );
+
+    AssertFalse(
+        Condition := sErrorMsg = '',
+        Message := 'Should not have empty error message on normalize.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbV1.x,
+        Delta := 0.0,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbV1.y,
+        Delta := 0.0,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbV1.z,
+        Delta := 0.0,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Vec3`_
+    * `F_NormalizedVec3`_
+
+
+FB_NormQuat_Test
+^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_NormQuat_Test EXTENDS FB_TestSuite
+    TestInputQuatExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestInputQuatExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+    END_VAR
+    TEST('TestInputQuatExpectCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+    fbQ2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+
+    AssertEquals_LREAL(
+        Expected := 5.477225575051661,
+        Actual := F_NormQuat(fbQ1),
+        Delta := 1e-10,
+        Message := 'Norm was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.218044907339020,
+        Actual := F_NormQuat(fbQ2),
+        Delta := 1e-10,
+        Message := 'Norm was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Quaternion`_
+    * `F_NormQuat`_
+
+
+FB_NormSqQuat_Test
+^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_NormSqQuat_Test EXTENDS FB_TestSuite
+    TestInputQuatExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestInputQuatExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+    END_VAR
+    TEST('TestInputQuatExpectCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+    fbQ2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+
+    AssertEquals_LREAL(
+        Expected := 30.0,
+        Actual := F_NormSqQuat(fbQ1),
+        Delta := 1e-10,
+        Message := 'Norm squared was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.047543581616482,
+        Actual := F_NormSqQuat(fbQ2),
+        Delta := 1e-10,
+        Message := 'Norm squared was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Quaternion`_
+    * `F_NormSqQuat`_
+
+
+FB_NormSqVec3_Test
+^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_NormSqVec3_Test EXTENDS FB_TestSuite
+    TestInputVec3ExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestInputVec3ExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+    END_VAR
+    TEST('TestInputVec3ExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+    fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+
+    AssertEquals_LREAL(
+        Expected := 14.0,
+        Actual := F_NormSqVec3(fbV1),
+        Delta := 1e-10,
+        Message := 'Norm squared was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.047533535429135,
+        Actual := F_NormSqVec3(fbV2),
+        Delta := 1e-10,
+        Message := 'Norm squared was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Vec3`_
+    * `F_NormSqVec3`_
+
+
+FB_NormVec3_Test
+^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_NormVec3_Test EXTENDS FB_TestSuite
+    TestInputVec3ExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestInputVec3ExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+    END_VAR
+    TEST('TestInputVec3ExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+    fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+
+    AssertEquals_LREAL(
+        Expected := 3.741657386773941,
+        Actual := F_NormVec3(fbV1),
+        Delta := 1e-10,
+        Message := 'Norm was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.218021869153384,
+        Actual := F_NormVec3(fbV2),
+        Delta := 1e-10,
+        Message := 'Norm was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Vec3`_
+    * `F_NormVec3`_
+
+
+FB_Quaternion
+^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_Quaternion IMPLEMENTS I_Quat
+    VAR
+        fw : LREAL;
+        fx : LREAL;
+        fy : LREAL;
+        fz : LREAL;
+    END_VAR
+
+
+    END_FUNCTION_BLOCK
+
+    METHOD AddQuat
+    VAR_INPUT
+        iQuat	: I_Quat;
+    END_VAR
+    w := w + iQuat.w;
+    x := x + iQuat.x;
+    y := y + iQuat.y;
+    z := z + iQuat.z;
+    END_METHOD
+
+    METHOD DivQuat
+    VAR_INPUT
+        iQuat	: I_Quat;
+    END_VAR
+    VAR_OUTPUT
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    VAR
+        fNormSq : LREAL;
+        fwi : LREAL;
+        fxi : LREAL;
+        fyi : LREAL;
+        fzi : LREAL;
+    END_VAR
+    bError := FALSE;
+    sErrorMsg := '';
+
+    fNormSq := F_NormSqQuat(iQuat);
+
+    IF fNormSq = 0.0 THEN
+        bError := TRUE;
+        sErrorMsg := 'Error: cannot divide by a quaternion with a norm of 0.';
+        RETURN;
+    END_IF
+
+    fwi := w;
+    fxi := x;
+    fyi := y;
+    fzi := z;
+
+    w := ((iQuat.w * fwi) + (iQuat.x * fxi) + (iQuat.y * fyi) + (iQuat.z * fzi)) / fNormSq;
+    x := ((iQuat.w * fxi) - (iQuat.x * fwi) - (iQuat.y * fzi) + (iQuat.z * fyi)) / fNormSq;
+    y := ((iQuat.w * fyi) + (iQuat.x * fzi) - (iQuat.y * fwi) - (iQuat.z * fxi)) / fNormSq;
+    z := ((iQuat.w * fzi) - (iQuat.x * fyi) + (iQuat.y * fxi) - (iQuat.z * fwi)) / fNormSq;
+    END_METHOD
+
+    METHOD DivScalar
+    VAR_INPUT
+        fScalar : LREAL;
+    END_VAR
+    VAR_OUTPUT
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    bError := FALSE;
+    sErrorMsg := '';
+
+    IF fScalar = 0.0 THEN
+        bError := TRUE;
+        sErrorMsg := 'Error: attempted division of quaternion by scalar of 0.';
+        RETURN;
+    END_IF
+
+    w := w / fScalar;
+    x := x / fScalar;
+    y := y / fScalar;
+    z := z / fScalar;
+    END_METHOD
+
+    METHOD EqualsQuat : BOOL
+    VAR_INPUT
+        iQuat	: I_Quat;
+    END_VAR
+    EqualsQuat := w = iQuat.w AND
+                  x = iQuat.x AND
+                  y = iQuat.y AND
+                  z = iQuat.z;
+    END_METHOD
+
+    METHOD GetNorm : LREAL
+    GetNorm := SQRT(w*w + x*x + y*y + z*z);
+    END_METHOD
+
+    METHOD GetNormSq : LREAL
+    GetNormSq := w*w + x*x + y*y + z*z;
+    END_METHOD
+
+    METHOD MakeConj
+    w := w;
+    x := -x;
+    y := -y;
+    z := -z;
+    END_METHOD
+
+    METHOD MulQuat
+    VAR_INPUT
+        iQuat	: I_Quat;
+    END_VAR
+    VAR
+        fwi : LREAL;
+        fxi : LREAL;
+        fyi : LREAL;
+        fzi : LREAL;
+    END_VAR
+    fwi := w;
+    fxi := x;
+    fyi := y;
+    fzi := z;
+
+    w := (fwi * iQuat.w) - (fxi * iQuat.x) - (fyi * iQuat.y) - (fzi * iQuat.z);
+    x := (fwi * iQuat.x) + (fxi * iQuat.w) + (fyi * iQuat.z) - (fzi * iQuat.y);
+    y := (fwi * iQuat.y) - (fxi * iQuat.z) + (fyi * iQuat.w) + (fzi * iQuat.x);
+    z := (fwi * iQuat.z) + (fxi * iQuat.y) - (fyi * iQuat.x) + (fzi * iQuat.w);
+    END_METHOD
+
+    METHOD Normalize
+    VAR_OUTPUT
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    VAR
+        fNorm : LREAL;
+    END_VAR
+    bError := FALSE;
+    sErrorMsg := '';
+
+    fNorm := GetNorm();
+
+    IF fNorm = 0.0 THEN
+        bError := TRUE;
+        sErrorMsg := 'Error: cannot normalize a quaternion with a norm of 0.';
+        RETURN;
+    END_IF
+
+    w := w / fNorm;
+    x := x / fNorm;
+    y := y / fNorm;
+    z := z / fNorm;
+    END_METHOD
+
+    METHOD Set
+    VAR_INPUT
+        w : LREAL;
+        i : LREAL;
+        j : LREAL;
+        k : LREAL;
+    END_VAR
+    THIS^.w := w;
+    THIS^.x := i;
+    THIS^.y := j;
+    THIS^.z := k;
+    END_METHOD
+
+    METHOD ToString : T_MaxString
+    ToString := '';
+
+    IF w < 0.0 THEN
+        ToString := CONCAT(ToString, '-');
+    END_IF
+
+    ToString := CONCAT(ToString, LREAL_TO_STRING(ABS(w)));
+
+    IF x >= 0.0 THEN
+        ToString := CONCAT(ToString, ' + ');
+    ELSE
+        ToString := CONCAT(ToString, ' - ');
+    END_IF
+
+    ToString := CONCAT(ToString, LREAL_TO_STRING(ABS(x)));
+    ToString := CONCAT(ToString, 'i');
+
+    IF y >= 0.0 THEN
+        ToString := CONCAT(ToString, ' + ');
+    ELSE
+        ToString := CONCAT(ToString, ' - ');
+    END_IF
+
+    ToString := CONCAT(ToString, LREAL_TO_STRING(ABS(y)));
+    ToString := CONCAT(ToString, 'j');
+
+    IF z >= 0.0 THEN
+        ToString := CONCAT(ToString, ' + ');
+    ELSE
+        ToString := CONCAT(ToString, ' - ');
+    END_IF
+
+    ToString := CONCAT(ToString, LREAL_TO_STRING(ABS(z)));
+    ToString := CONCAT(ToString, 'k');
+    END_METHOD
+
+    PROPERTY w : LREAL
+
+    w := fw;
+    END_PROPERTY
+
+    PROPERTY w : LREAL
+
+    fw := w;
+    END_PROPERTY
+
+    PROPERTY x : LREAL
+
+    x := fx;
+    END_PROPERTY
+
+    PROPERTY x : LREAL
+
+    fx := x;
+    END_PROPERTY
+
+    PROPERTY y : LREAL
+
+    y := fy;
+    END_PROPERTY
+
+    PROPERTY y : LREAL
+
+    fy := y;
+    END_PROPERTY
+
+    PROPERTY z : LREAL
+
+    z := fz;
+    END_PROPERTY
+
+    PROPERTY z : LREAL
+
+    fz := z;
+    END_PROPERTY
+
+
+Related:
+    * `F_NormSqQuat`_
+
+
+FB_Quaternion_Test
+^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_Quaternion_Test EXTENDS FB_TestSuite
+    TestAddQuatExpectCorrectResult();
+
+    TestDivQuatBy0ExpectErrorUnchanged();
+
+    TestDivQuatExpectNoErrorCorrectResult();
+
+    TestDivScalarBy0ExpectErrorUnchanged();
+
+    TestDivScalarExpectNoErrorCorrectResult();
+
+    TestEqualsQuatExpectCorrectResult();
+
+    TestGetNormExpectCorrectResult();
+
+    TestMakeConjExpectCorrectResult();
+
+    TestMulQuatExpectCorrectResult();
+
+    TestNormalizeBy0ExpectErrorUnchanged();
+
+    TestNormalizeExpectCorrectResult();
+
+    TestSetExpectCorrectResult();
+
+    TestToStringExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestAddQuatExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+        fbQ3 : FB_Quaternion;
+    END_VAR
+    TEST('TestAddQuatExpectCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+    fbQ2.Set(5, 11, 14, 17);
+    fbQ3.Set(2, -1, -5, 2);
+
+    fbQ1.AddQuat(fbQ2);
+    fbQ3.AddQuat(fbQ1);
+
+    // Q1
+    AssertEquals_LREAL(
+        Expected := 6.0,
+        Actual := fbQ1.w,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 13.0,
+        Actual := fbQ1.x,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 17.0,
+        Actual := fbQ1.y,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 21.0,
+        Actual := fbQ1.z,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    // Q2
+    AssertEquals_LREAL(
+        Expected := 5.0,
+        Actual := fbQ2.w,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 11.0,
+        Actual := fbQ2.x,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 14.0,
+        Actual := fbQ2.y,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 17.0,
+        Actual := fbQ2.z,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [z] was not the expected value.'
+    );
+
+    // Q3
+    AssertEquals_LREAL(
+        Expected := 8.0,
+        Actual := fbQ3.w,
+        Delta := 0.0,
+        Message := 'Quaternion 3 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 12.0,
+        Actual := fbQ3.x,
+        Delta := 0.0,
+        Message := 'Quaternion 3 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 12.0,
+        Actual := fbQ3.y,
+        Delta := 0.0,
+        Message := 'Quaternion 3 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 23.0,
+        Actual := fbQ3.z,
+        Delta := 0.0,
+        Message := 'Quaternion 3 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestDivQuatBy0ExpectErrorUnchanged
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestDivQuatBy0ExpectErrorUnchanged');
+
+    fbQ1.Set(1, 2, 3, 4);
+    fbQ2.Set(0, 0, 0, 0);
+
+    fbQ1.DivQuat(
+        iQuat := fbQ2,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertTrue(
+        Condition := bError,
+        Message := 'Should have had an error on division.'
+    );
+
+    AssertFalse(
+        Condition := sErrorMsg = '',
+        Message := 'Should not have had an empty error message on division.'
+    );
+
+    // Q1
+    AssertEquals_LREAL(
+        Expected := 1,
+        Actual := fbQ1.w,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 2,
+        Actual := fbQ1.x,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 3,
+        Actual := fbQ1.y,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 4,
+        Actual := fbQ1.z,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    // Q2
+    AssertEquals_LREAL(
+        Expected := 0,
+        Actual := fbQ2.w,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0,
+        Actual := fbQ2.x,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0,
+        Actual := fbQ2.y,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0,
+        Actual := fbQ2.z,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestDivQuatExpectNoErrorCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+        fbQ3 : FB_Quaternion;
+
+        bError1 : BOOL;
+        bError2 : BOOL;
+        sErrorMsg1 : T_MaxString;
+        sErrorMsg2 : T_MaxString;
+    END_VAR
+    TEST('TestDivQuatExpectNoErrorCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+    fbQ2.Set(5, 11, 14, 17);
+    fbQ3.Set(2, -1, -5, 2);
+
+    fbQ1.DivQuat(
+        iQuat := fbQ2,
+        bError => bError1,
+        sErrorMsg => sErrorMsg1
+    );
+
+    fbQ3.DivQuat(
+        iQuat := fbQ1,
+        bError => bError2,
+        sErrorMsg => sErrorMsg2
+    );
+
+    AssertFalse(
+        Condition := bError1,
+        Message := 'Should not have had an error on first division.'
+    );
+
+    AssertFalse(
+        Condition := bError2,
+        Message := 'Should not have had an error on second division.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg1 = '',
+        Message := 'Should have empty error message on first division.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg2 = '',
+        Message := 'Should have empty error message on second division.'
+    );
+
+    // Q1
+    AssertEquals_LREAL(
+        Expected := 0.217115689381933,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.00950871632329635,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.01743264659271,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.00316957210776545,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    // Q2
+    AssertEquals_LREAL(
+        Expected := 5.0,
+        Actual := fbQ2.w,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 11.0,
+        Actual := fbQ2.x,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 14.0,
+        Actual := fbQ2.y,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 17.0,
+        Actual := fbQ2.z,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [z] was not the expected value.'
+    );
+
+    // Q3
+    AssertEquals_LREAL(
+        Expected := 7.36666666666667,
+        Actual := fbQ3.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -4.56666666666667,
+        Actual := fbQ3.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -24.0333333333333,
+        Actual := fbQ3.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 7.9,
+        Actual := fbQ3.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestDivScalarBy0ExpectErrorUnchanged
+    VAR
+        fbQ1 : FB_Quaternion;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestDivScalarBy0ExpectErrorUnchanged');
+
+    fbQ1.Set(1, 2, 3, 4);
+
+    fbQ1.DivScalar(
+        fScalar := 0.0,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertTrue(
+        Condition := bError,
+        Message := 'Should have had an error on the scalar division operation.'
+    );
+
+    AssertFalse(
+        Condition := sErrorMsg = '',
+        Message := 'Should not have had an empty error message on the scalar division operation.'
+    );
+
+    // Q1
+    AssertEquals_LREAL(
+        Expected := 1,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 2,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 3,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 4,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestDivScalarExpectNoErrorCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestDivScalarExpectNoErrorCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+
+    fbQ1.DivScalar(
+        fScalar := 2.0,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error on the scalar division operation.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have had an empty error message on the scalar division operation.'
+    );
+
+    // Q1
+    AssertEquals_LREAL(
+        Expected := 0.5,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.0,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.5,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 2.0,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestEqualsQuatExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+        fbQ3 : FB_Quaternion;
+    END_VAR
+    TEST('TestEqualsQuatExpectCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+    fbQ2.Set(5, 11, 14, 17);
+    fbQ3.Set(1, 2, 3, 4);
+
+    AssertTrue(
+        Condition := fbQ1.EqualsQuat(fbQ3),
+        Message := 'Q1 should register as equal to Q3'
+    );
+
+    AssertTrue(
+        Condition := fbQ3.EqualsQuat(fbQ1),
+        Message := 'Q3 should register as equal to Q1'
+    );
+
+    AssertFalse(
+        Condition := fbQ1.EqualsQuat(fbQ2),
+        Message := 'Q1 should not register as equal to Q2'
+    );
+
+    AssertFalse(
+        Condition := fbQ2.EqualsQuat(fbQ1),
+        Message := 'Q2 should not register as equal to Q1'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestGetNormExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+    END_VAR
+    TEST('TestGetNormExpectCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+    fbQ2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+
+    AssertEquals_LREAL(
+        Expected := 5.477225575051661,
+        Actual := fbQ1.GetNorm(),
+        Delta := 1e-10,
+        Message := 'Norm was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.218044907339020,
+        Actual := fbQ2.GetNorm(),
+        Delta := 1e-10,
+        Message := 'Norm was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestGetNormSqExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+    END_VAR
+    TEST('TestGetNormSqExpectCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+    fbQ2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+
+    AssertEquals_LREAL(
+        Expected := 30.0,
+        Actual := fbQ1.GetNormSq(),
+        Delta := 1e-10,
+        Message := 'Norm squared was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.047543581616482,
+        Actual := fbQ1.GetNormSq(),
+        Delta := 1e-10,
+        Message := 'Norm squared was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestMakeConjExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+    END_VAR
+    TEST('TestMakeConjExpectCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+    fbQ1.MakeConj();
+
+    AssertEquals_LREAL(
+        Expected := 1,
+        Actual := fbQ1.w,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -2,
+        Actual := fbQ1.x,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -3,
+        Actual := fbQ1.y,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -4,
+        Actual := fbQ1.z,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestMulQuatExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+        fbQ3 : FB_Quaternion;
+    END_VAR
+    TEST('TestMulQuatExpectCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+    fbQ2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+    fbQ3.Set(2, -1, -5, 2);
+
+    fbQ1.MulQuat(fbQ2);
+    fbQ3.MulQuat(fbQ1);
+
+    // Q1
+    AssertEquals_LREAL(
+        Expected := 0.196513470681458,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.345483359746434,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.637083993660856,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.928684627575277,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    // Q2
+    AssertEquals_LREAL(
+        Expected := 0.217115689381933,
+        Actual := fbQ2.w,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.00950871632329635,
+        Actual := fbQ2.x,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.01743264659271,
+        Actual := fbQ2.y,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.00316957210776545,
+        Actual := fbQ2.z,
+        Delta := 0.0,
+        Message := 'Quaternion 2 [z] was not the expected value.'
+    );
+
+    // Q3
+    AssertEquals_LREAL(
+        Expected := 2.06656101426307,
+        Actual := fbQ3.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -5.42313787638669,
+        Actual := fbQ3.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.91125198098257,
+        Actual := fbQ3.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 3.34072900158479,
+        Actual := fbQ3.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 3 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestNormalizeBy0ExpectErrorUnchanged
+    VAR
+        fbQ1 : FB_Quaternion;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestNormalizeBy0ExpectErrorUnchanged');
+
+    fbQ1.Set(0, 0, 0, 0);
+    fbQ1.Normalize(
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertTrue(
+        Condition := bError,
+        Message := 'Should have had an error on normalize.'
+    );
+
+    AssertFalse(
+        Condition := sErrorMsg = '',
+        Message := 'Should not have empty error message on normalize.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ1.w,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ1.x,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ1.y,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbQ1.z,
+        Delta := 0.0,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestNormalizeExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestNormalizeExpectCorrectResult');
+
+    fbQ1.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271, -0.00316957210776545);
+    fbQ1.Normalize(
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error on normalize.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message on normalize.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.995738410181524,
+        Actual := fbQ1.w,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [w] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.043608981467804,
+        Actual := fbQ1.x,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0799497993576408,
+        Actual := fbQ1.y,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.0145363271559347,
+        Actual := fbQ1.z,
+        Delta := 1e-10,
+        Message := 'Quaternion 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestSetExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbQ2 : FB_Quaternion;
+    END_VAR
+    TEST('TestSetExpectCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+
+    AssertFalse(
+        Condition := fbQ1.EqualsQuat(fbQ2),
+        Message := 'Q1 should not register as equal to Q2'
+    );
+
+    fbQ1.Set(0, 0, 0, 0);
+
+    AssertTrue(
+        Condition := fbQ1.EqualsQuat(fbQ2),
+        Message := 'Q1 should register as equal to Q2 after set operation.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestToStringExpectCorrectResult
+    VAR
+        fbQ1 : FB_Quaternion;
+        sExpected : T_MaxString;
+    END_VAR
+    TEST('TestToStringExpectCorrectResult');
+
+    fbQ1.Set(1, 2, 3, 4);
+    sExpected := '1.0 + 2.0i + 3.0j + 4.0k';
+
+    AssertTrue(
+        Condition := fbQ1.ToString() = sExpected,
+        Message := CONCAT('Expected string to be: [',
+                   CONCAT(sExpected,
+                   CONCAT('] but string was: [',
+                   CONCAT(fbQ1.ToString(),
+                   ']'))))
+    );
+
+    fbQ1.Set(-1, -2, -3, -4);
+    sExpected := '-1.0 - 2.0i - 3.0j - 4.0k';
+
+    AssertTrue(
+        Condition := fbQ1.ToString() = sExpected,
+        Message := CONCAT('Expected string to be: [',
+                   CONCAT(sExpected,
+                   CONCAT('] but string was: [',
+                   CONCAT(fbQ1.ToString(),
+                   ']'))))
+    );
+
+    fbQ1.Set(0, 0, 0, 0);
+    sExpected := '0.0 + 0.0i + 0.0j + 0.0k';
+
+    AssertTrue(
+        Condition := fbQ1.ToString() = sExpected,
+        Message := CONCAT('Expected string to be: [',
+                   CONCAT(sExpected,
+                   CONCAT('] but string was: [',
+                   CONCAT(fbQ1.ToString(),
+                   ']'))))
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Quaternion`_
+
+
+FB_QuatRotateVec3Frame_Test
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_QuatRotateVec3Frame_Test EXTENDS FB_TestSuite
+    Test0QuatExpectErrorUnchanged();
+
+    TestRandInputExpectCorrectResult_1();
+
+    TestRandInputExpectCorrectResult_2();
+
+    TestRandInputExpectCorrectResult_3();
+
+    TestRandInputExpectCorrectResult_4();
+
+    TestRandInputExpectCorrectResult_5();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE Test0QuatExpectErrorUnchanged
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('Test0QuatExpectErrorUnchanged');
+
+    fbQ1.Set(0, 0, 0, 0);
+    fbV1.Set(1, 1, 1);
+    fbV1 := F_QuatRotateVec3Frame(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertTrue(
+        Condition := bError,
+        Message := 'Should have had an error.'
+    );
+
+    AssertFalse(
+        Condition := sErrorMsg = '',
+        Message := 'Should not have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1,
+        Actual := fbV1.x,
+        Delta := 0.0,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1,
+        Actual := fbV1.y,
+        Delta := 0.0,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1,
+        Actual := fbV1.z,
+        Delta := 0.0,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputExpectCorrectResult_1
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestRandInputExpectCorrectResult_1');
+
+    fbQ1.Set(0.350952380892271, 0.513249539867053, 0.401808033751942, 0.075966691690842);
+    fbV1.Set(0.239916153553658, 0.123318934835166, 0.183907788282417);
+    fbV1 := F_QuatRotateVec3Frame(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg,
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.1309889114846021,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.298917056874025,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.008938299258921,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputExpectCorrectResult_2
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestRandInputExpectCorrectResult_2');
+
+    fbQ1.Set(0.239952525664903, 0.417267069084370, 0.049654430325742, 0.902716109915281);
+    fbV1.Set(0.944787189721646, 0.490864092468080, 0.489252638400019);
+    fbV1 := F_QuatRotateVec3Frame(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg,
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0348639784144761,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.652315007988924,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.972732321185814,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputExpectCorrectResult_3
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestRandInputExpectCorrectResult_3');
+
+    fbQ1.Set(0.337719409821377, 0.900053846417662, 0.369246781120215, 0.111202755293787);
+    fbV1.Set(0.780252068321138, 0.389738836961253, 0.241691285913833);
+    fbV1 := F_QuatRotateVec3Frame(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg,
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.8216066116511471,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.376413959087926,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.048779462244682,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputExpectCorrectResult_4
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestRandInputExpectCorrectResult_4');
+
+    fbQ1.Set(0.403912145588115, 0.096454525168389, 0.131973292606335, 0.942050590775485);
+    fbV1.Set(0.956134540229802, 0.575208595078466, 0.059779542947156);
+    fbV1 := F_QuatRotateVec3Frame(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg,
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.2259527588901821,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -1.017084075917310,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.403877597661613,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputExpectCorrectResult_5
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestRandInputExpectCorrectResult_5');
+
+    fbQ1.Set(0.234779913372406, 0.353158571222071, 0.821194040197959, 0.015403437651555);
+    fbV1.Set(0.043023801657808, 0.168990029462704, 0.649115474956452);
+    fbV1 := F_QuatRotateVec3Frame(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg,
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.1934394675708541,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.293602775485964,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.572833448750751,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Quaternion`_
+    * `FB_Vec3`_
+    * `F_QuatRotateVec3Frame`_
+
+
+FB_QuatRotateVec3Point_Test
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_QuatRotateVec3Point_Test EXTENDS FB_TestSuite
+    Test0QuatExpectErrorUnchanged();
+
+    TestRandInputExpectCorrectResult_1();
+
+    TestRandInputExpectCorrectResult_2();
+
+    TestRandInputExpectCorrectResult_3();
+
+    TestRandInputExpectCorrectResult_4();
+
+    TestRandInputExpectCorrectResult_5();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE Test0QuatExpectErrorUnchanged
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('Test0QuatExpectErrorUnchanged');
+
+    fbQ1.Set(0, 0, 0, 0);
+    fbV1.Set(1, 1, 1);
+    fbV1 := F_QuatRotateVec3Point(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertTrue(
+        Condition := bError,
+        Message := 'Should have had an error.'
+    );
+
+    AssertFalse(
+        Condition := sErrorMsg = '',
+        Message := 'Should not have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1,
+        Actual := fbV1.x,
+        Delta := 0.0,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1,
+        Actual := fbV1.y,
+        Delta := 0.0,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1,
+        Actual := fbV1.z,
+        Delta := 0.0,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputExpectCorrectResult_1
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestRandInputExpectCorrectResult_1');
+
+    fbQ1.Set(0.731722385658670, 0.647745963136307, 0.450923706430945, 0.547008892286345);
+    fbV1.Set(0.296320805607773, 0.744692807074156, 0.188955015032545);
+    fbV1 := F_QuatRotateVec3Point(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg,
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.1588618332623411,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.232767876109413,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.773730849995020,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputExpectCorrectResult_2
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestRandInputExpectCorrectResult_2');
+
+    fbQ1.Set(0.686775433365315, 0.183511155737270, 0.368484596490336, 0.625618560729690);
+    fbV1.Set(0.780227435151377, 0.081125768865785, 0.929385970968730);
+    fbV1 := F_QuatRotateVec3Point(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg,
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.5888629779440591,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.953999228289107,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.471402576998784,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputExpectCorrectResult_3
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestRandInputExpectCorrectResult_3');
+
+    fbQ1.Set(0.775712678608402, 0.486791632403172, 0.435858588580919, 0.446783749429806);
+    fbV1.Set(0.306349472016557, 0.508508655381127, 0.510771564172110);
+    fbV1 := F_QuatRotateVec3Point(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg,
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.4628031823996781,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.273642504441062,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.569430976056908,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputExpectCorrectResult_4
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestRandInputExpectCorrectResult_4');
+
+    fbQ1.Set(0.817627708322262, 0.794831416883453, 0.644318130193692, 0.378609382660268);
+    fbV1.Set(0.811580458282477, 0.532825588799455, 0.350727103576883);
+    fbV1 := F_QuatRotateVec3Point(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg,
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.7523821769332431,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.652796600025488,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.270837789751114,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestRandInputExpectCorrectResult_5
+    VAR
+        fbQ1 : FB_Quaternion;
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestRandInputExpectCorrectResult_5');
+
+    fbQ1.Set(0.939001561999887, 0.875942811492984, 0.550156342898422, 0.622475086001227);
+    fbV1.Set(0.587044704531417, 0.207742292733028, 0.301246330279491);
+    fbV1 := F_QuatRotateVec3Point(
+        iQuat := fbQ1,
+        iVec3 := fbV1,
+        bError => bError,
+        sErrorMsg => sErrorMsg,
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.4959148487251781,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.414249906357875,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.246967962925536,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Quaternion`_
+    * `FB_Vec3`_
+    * `F_QuatRotateVec3Point`_
+
+
+FB_Vec3
+^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_Vec3 IMPLEMENTS I_Vec3, I_Quat
+    VAR
+        fx : LREAL;
+        fy : LREAL;
+        fz : LREAL;
+    END_VAR
+
+
+    END_FUNCTION_BLOCK
+
+    METHOD AddVec3
+    VAR_INPUT
+        iVec3	: I_Vec3;
+    END_VAR
+    x := x + iVec3.x;
+    y := y + iVec3.y;
+    z := z + iVec3.z;
+    END_METHOD
+
+    METHOD CrossVec3
+    VAR_INPUT
+        iVec3	: I_Vec3;
+    END_VAR
+    VAR
+        fxi : LREAL;
+        fyi : LREAL;
+        fzi : LREAL;
+    END_VAR
+    fxi := x;
+    fyi := y;
+    fzi := z;
+
+    x := (fyi * iVec3.z) - (fzi * iVec3.y);
+    y := (fzi * iVec3.x) - (fxi * iVec3.z);
+    z := (fxi * iVec3.y) - (fyi * iVec3.x);
+    END_METHOD
+
+    METHOD DivScalar
+    VAR_INPUT
+        fScalar : LREAL;
+    END_VAR
+    VAR_OUTPUT
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    bError := FALSE;
+    sErrorMsg := '';
+
+    IF fScalar = 0.0 THEN
+        bError := TRUE;
+        sErrorMsg := 'Error: attempted division of vector by scalar of 0.';
+        RETURN;
+    END_IF
+
+    x := x / fScalar;
+    y := y / fScalar;
+    z := z / fScalar;
+    END_METHOD
+
+    METHOD DotVec3 : LREAL
+    VAR_INPUT
+        iVec3	: I_Vec3;
+    END_VAR
+    DotVec3 := (x * iVec3.x) + (y * iVec3.y) + (z * iVec3.z);
+    END_METHOD
+
+    METHOD EqualsVec3 : BOOL
+    VAR_INPUT
+        iVec3 : I_Vec3;
+    END_VAR
+    EqualsVec3 := x = iVec3.x AND
+                  y = iVec3.y AND
+                  z = iVec3.z;
+    END_METHOD
+
+    METHOD GetNorm : LREAL
+    GetNorm := SQRT(x*x + y*y + z*z);
+    END_METHOD
+
+    METHOD GetNormSq : LREAL
+    GetNormSq := x*x + y*y + z*z;
+    END_METHOD
+
+    METHOD Normalize
+    VAR_OUTPUT
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    VAR
+        fNorm : LREAL;
+    END_VAR
+    bError := FALSE;
+    sErrorMsg := '';
+
+    fNorm := GetNorm();
+
+    IF fNorm = 0.0 THEN
+        bError := TRUE;
+        sErrorMsg := 'Error: cannot normalize a vector with a norm of 0.';
+        RETURN;
+    END_IF
+
+    x := x / fNorm;
+    y := y / fNorm;
+    z := z / fNorm;
+    END_METHOD
+
+    METHOD Set
+    VAR_INPUT
+        x : LREAL;
+        y : LREAL;
+        z : LREAL;
+    END_VAR
+    THIS^.x := x;
+    THIS^.y := y;
+    THIS^.z := z;
+    END_METHOD
+
+    METHOD ToString : T_MaxString
+    ToString := '(';
+
+    ToString := CONCAT(ToString, LREAL_TO_STRING(x));
+    ToString := CONCAT(ToString, ', ');
+
+    ToString := CONCAT(ToString, LREAL_TO_STRING(y));
+    ToString := CONCAT(ToString, ', ');
+
+    ToString := CONCAT(ToString, LREAL_TO_STRING(z));
+    ToString := CONCAT(ToString, ')');
+    END_METHOD
+
+    PROPERTY w : LREAL
+
+    w := 0.0;
+    END_PROPERTY
+
+    PROPERTY x : LREAL
+
+    x := fx;
+    END_PROPERTY
+
+    PROPERTY x : LREAL
+
+    fx := x;
+    END_PROPERTY
+
+    PROPERTY y : LREAL
+
+    y := fy;
+    END_PROPERTY
+
+    PROPERTY y : LREAL
+
+    fy := y;
+    END_PROPERTY
+
+    PROPERTY z : LREAL
+
+    z := fz;
+    END_PROPERTY
+
+    PROPERTY z : LREAL
+
+    fz := z;
+    END_PROPERTY
+
+
+
+
+FB_Vec3_Test
+^^^^^^^^^^^^
+
+::
+
+    FUNCTION_BLOCK FB_Vec3_Test EXTENDS FB_TestSuite
+    TestAddVec3ExpectCorrectResult();
+
+    TestCrossVec3ExpectCorrectResult();
+
+    TestDivScalarBy0ExpectErrorUnchanged();
+
+    TestDivScalarExpectNoErrorCorrectResult();
+
+    TestDotVec3ExpectCorrectResult();
+
+    TestEqualsVec3ExpectCorrectResult();
+
+    TestGetNormExpectCorrectResult();
+
+    TestGetNormSqExpectCorrectResult();
+
+    TestNormalizeBy0ExpectErrorUnchanged();
+
+    TestNormalizeExpectCorrectResult();
+
+    TestSetExpectCorrectResult();
+
+    TestToStringExpectCorrectResult();
+
+    END_FUNCTION_BLOCK
+
+    METHOD PRIVATE TestAddVec3ExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+        fbV3 : FB_Vec3;
+    END_VAR
+    TEST('TestAddVec3ExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+    fbV2.Set(5, 11, 14);
+    fbV3.Set(2, -1, -5);
+
+    fbV1.AddVec3(fbV2);
+    fbV3.AddVec3(fbV1);
+
+    // V1
+    AssertEquals_LREAL(
+        Expected := 6.0,
+        Actual := fbV1.x,
+        Delta := 0.0,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 13.0,
+        Actual := fbV1.y,
+        Delta := 0.0,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 17.0,
+        Actual := fbV1.z,
+        Delta := 0.0,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    // V2
+    AssertEquals_LREAL(
+        Expected := 5.0,
+        Actual := fbV2.x,
+        Delta := 0.0,
+        Message := 'Vector 2 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 11.0,
+        Actual := fbV2.y,
+        Delta := 0.0,
+        Message := 'Vector 2 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 14.0,
+        Actual := fbV2.z,
+        Delta := 0.0,
+        Message := 'Vector 2 [z] was not the expected value.'
+    );
+
+    // V3
+    AssertEquals_LREAL(
+        Expected := 8.0,
+        Actual := fbV3.x,
+        Delta := 0.0,
+        Message := 'Vector 3 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 12.0,
+        Actual := fbV3.y,
+        Delta := 0.0,
+        Message := 'Vector 3 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 12.0,
+        Actual := fbV3.z,
+        Delta := 0.0,
+        Message := 'Vector 3 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestCrossVec3ExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+        fbV3 : FB_Vec3;
+    END_VAR
+    TEST('TestCrossVec3ExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+    fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+    fbV3.Set(2, -1, -5);
+
+    fbV1.CrossVec3(fbV2);
+    fbV3.CrossVec3(fbV1);
+
+    // V1
+    AssertEquals_LREAL(
+        Expected := 0.063391442155309,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.633914421553089,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.443740095087162,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    // V2
+    AssertEquals_LREAL(
+        Expected := 0.217115689381933,
+        Actual := fbV2.x,
+        Delta := 0.0,
+        Message := 'Vector 2 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.00950871632329635,
+        Actual := fbV2.y,
+        Delta := 0.0,
+        Message := 'Vector 2 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.01743264659271,
+        Actual := fbV2.z,
+        Delta := 0.0,
+        Message := 'Vector 2 [z] was not the expected value.'
+    );
+
+    // V3
+    AssertEquals_LREAL(
+        Expected := 3.613312202852607,
+        Actual := fbV3.x,
+        Delta := 1e-10,
+        Message := 'Vector 3 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.570522979397780,
+        Actual := fbV3.y,
+        Delta := 1e-10,
+        Message := 'Vector 3 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.331220285261487,
+        Actual := fbV3.z,
+        Delta := 1e-10,
+        Message := 'Vector 3 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestDivScalarBy0ExpectErrorUnchanged
+    VAR
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestDivScalarBy0ExpectErrorUnchanged');
+
+    fbV1.Set(1, 2, 3);
+
+    fbV1.DivScalar(
+        fScalar := 0.0,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertTrue(
+        Condition := bError,
+        Message := 'Should have had an error on the scalar division operation.'
+    );
+
+    AssertFalse(
+        Condition := sErrorMsg = '',
+        Message := 'Should not have had an empty error message on the scalar division operation.'
+    );
+
+    // V1
+    AssertEquals_LREAL(
+        Expected := 1,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 2,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 3,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestDivScalarExpectNoErrorCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestDivScalarExpectNoErrorCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+
+    fbV1.DivScalar(
+        fScalar := 2.0,
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error on the scalar division operation.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have had an empty error message on the scalar division operation.'
+    );
+
+    // V1
+    AssertEquals_LREAL(
+        Expected := 0.5,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.0,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 1.5,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestDotVec3ExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+        fbV3 : FB_Vec3;
+    END_VAR
+    TEST('TestDotVec3ExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+    fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+    fbV3.Set(43, 12, 856);
+
+    AssertEquals_LREAL(
+        Expected := 0.250396196513470,
+        Actual := fbV1.DotVec3(fbV2),
+        Delta := 1e-10,
+        Message := 'Dot product was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 24.144215530903324,
+        Actual := fbV2.DotVec3(fbV3),
+        Delta := 1e-10,
+        Message := 'Dot product was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestEqualsVec3ExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+        fbV3 : FB_Vec3;
+    END_VAR
+    TEST('TestEqualsVec3ExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+    fbV2.Set(5, 11, 14);
+    fbV3.Set(1, 2, 3);
+
+    AssertTrue(
+        Condition := fbV1.EqualsVec3(fbV3),
+        Message := 'V1 should register as equal to V3'
+    );
+
+    AssertTrue(
+        Condition := fbV3.EqualsVec3(fbV1),
+        Message := 'V3 should register as equal to V1'
+    );
+
+    AssertFalse(
+        Condition := fbV1.EqualsVec3(fbV2),
+        Message := 'V1 should not register as equal to V2'
+    );
+
+    AssertFalse(
+        Condition := fbV2.EqualsVec3(fbV1),
+        Message := 'V2 should not register as equal to V1'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestGetNormExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+    END_VAR
+    TEST('TestGetNormExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+    fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+
+    AssertEquals_LREAL(
+        Expected := 3.741657386773941,
+        Actual := fbV1.GetNorm(),
+        Delta := 1e-10,
+        Message := 'Norm was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.218021869153384,
+        Actual := fbV2.GetNorm(),
+        Delta := 1e-10,
+        Message := 'Norm was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestGetNormSqExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+    END_VAR
+    TEST('TestGetNormSqExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+    fbV2.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+
+    AssertEquals_LREAL(
+        Expected := 14.0,
+        Actual := fbV1.GetNormSq(),
+        Delta := 1e-10,
+        Message := 'Norm squared was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.047533535429135,
+        Actual := fbV2.GetNormSq(),
+        Delta := 1e-10,
+        Message := 'Norm squared was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestNormalizeBy0ExpectErrorUnchanged
+    VAR
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestNormalizeBy0ExpectErrorUnchanged');
+
+    fbV1.Set(0, 0, 0);
+    fbV1.Normalize(
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertTrue(
+        Condition := bError,
+        Message := 'Should have had an error on normalize.'
+    );
+
+    AssertFalse(
+        Condition := sErrorMsg = '',
+        Message := 'Should not have empty error message on normalize.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbV1.x,
+        Delta := 0.0,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbV1.y,
+        Delta := 0.0,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.0,
+        Actual := fbV1.z,
+        Delta := 0.0,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestNormalizeExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+
+        bError : BOOL;
+        sErrorMsg : T_MaxString;
+    END_VAR
+    TEST('TestNormalizeExpectCorrectResult');
+
+    fbV1.Set(0.217115689381933, -0.00950871632329635, 0.01743264659271);
+    fbV1.Normalize(
+        bError => bError,
+        sErrorMsg => sErrorMsg
+    );
+
+    AssertFalse(
+        Condition := bError,
+        Message := 'Should not have had an error on normalize.'
+    );
+
+    AssertTrue(
+        Condition := sErrorMsg = '',
+        Message := 'Should have empty error message on normalize.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.995843629013136,
+        Actual := fbV1.x,
+        Delta := 1e-10,
+        Message := 'Vector 1 [x] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := -0.043613589591816,
+        Actual := fbV1.y,
+        Delta := 1e-10,
+        Message := 'Vector 1 [y] was not the expected value.'
+    );
+
+    AssertEquals_LREAL(
+        Expected := 0.079958247584997,
+        Actual := fbV1.z,
+        Delta := 1e-10,
+        Message := 'Vector 1 [z] was not the expected value.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestSetExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        fbV2 : FB_Vec3;
+    END_VAR
+    TEST('TestSetExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+
+    AssertFalse(
+        Condition := fbV1.EqualsVec3(fbV2),
+        Message := 'V1 should not register as equal to V2'
+    );
+
+    fbV1.Set(0, 0, 0);
+
+    AssertTrue(
+        Condition := fbV1.EqualsVec3(fbV2),
+        Message := 'V1 should register as equal to V2 after set operation.'
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+    METHOD PRIVATE TestToStringExpectCorrectResult
+    VAR
+        fbV1 : FB_Vec3;
+        sExpected : T_MaxString;
+    END_VAR
+    TEST('TestToStringExpectCorrectResult');
+
+    fbV1.Set(1, 2, 3);
+    sExpected := '(1.0, 2.0, 3.0)';
+
+    AssertTrue(
+        Condition := fbV1.ToString() = sExpected,
+        Message := CONCAT('Expected string to be: [',
+                   CONCAT(sExpected,
+                   CONCAT('] but string was: [',
+                   CONCAT(fbV1.ToString(),
+                   ']'))))
+    );
+
+    fbV1.Set(-1, -2, -3);
+    sExpected := '(-1.0, -2.0, -3.0)';
+
+    AssertTrue(
+        Condition := fbV1.ToString() = sExpected,
+        Message := CONCAT('Expected string to be: [',
+                   CONCAT(sExpected,
+                   CONCAT('] but string was: [',
+                   CONCAT(fbV1.ToString(),
+                   ']'))))
+    );
+
+    fbV1.Set(0, 0, 0);
+    sExpected := '(0.0, 0.0, 0.0)';
+
+    AssertTrue(
+        Condition := fbV1.ToString() = sExpected,
+        Message := CONCAT('Expected string to be: [',
+                   CONCAT(sExpected,
+                   CONCAT('] but string was: [',
+                   CONCAT(fbV1.ToString(),
+                   ']'))))
+    );
+
+    TEST_FINISHED();
+    END_METHOD
+
+
+Related:
+    * `FB_Vec3`_
+
+
+PRG_Test
+^^^^^^^^
+
+::
+
+    PROGRAM PRG_Test
+    VAR
+        fbAxisAngleQuatTest : FB_AxisAngleQuat_Test;
+        fbCrossTest : FB_Cross_Test;
+        fbDotTest : FB_Dot_Test;
+        fbEulerRotateVec3FrameTest : FB_EulerRotateVec3Frame_Test;
+        fbEulerRotateVec3PointTest : FB_EulerRotateVec3Point_Test;
+        fbEulerToQuatTest : FB_EulerToQuat_Test;
+        fbMulQuatTest : FB_MulQuat_Test;
+        fbNormalizedQuatTest : FB_NormalizedQuat_Test;
+        fbNormalizedVec3Test : FB_NormalizedVec3_Test;
+        fbNormQuatTest : FB_NormQuat_Test;
+        fbNormSqQuatTest : FB_NormSqQuat_Test;
+        fbNormSqVec3Test : FB_NormSqVec3_Test;
+        fbNormVec3Test : FB_NormVec3_Test;
+        fbQuaternionTest : FB_Quaternion_Test;
+        fbQuatRotateVec3FrameTest : FB_QuatRotateVec3Frame_Test;
+        fbQuatRotateVec3PointTest : FB_QuatRotateVec3Point_Test;
+        fbVec3Test : FB_Vec3_Test;
+    END_VAR
+    TcUnit.RUN();
+
+    END_PROGRAM
+
+
+Related:
+    * `FB_AxisAngleQuat_Test`_
+    * `FB_Cross_Test`_
+    * `FB_Dot_Test`_
+    * `FB_EulerRotateVec3Frame_Test`_
+    * `FB_EulerRotateVec3Point_Test`_
+    * `FB_EulerToQuat_Test`_
+    * `FB_MulQuat_Test`_
+    * `FB_NormQuat_Test`_
+    * `FB_NormSqQuat_Test`_
+    * `FB_NormSqVec3_Test`_
+    * `FB_NormVec3_Test`_
+    * `FB_NormalizedQuat_Test`_
+    * `FB_NormalizedVec3_Test`_
+    * `FB_QuatRotateVec3Frame_Test`_
+    * `FB_QuatRotateVec3Point_Test`_
+    * `FB_Quaternion_Test`_
+    * `FB_Vec3_Test`_
+
